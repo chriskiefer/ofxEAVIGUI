@@ -41,7 +41,8 @@ namespace EAVIGUI {
     map<string, ofTrueTypeFont> InterfaceManager::fontList;
     float InterfaceManager::deviceScaleMod = 1.0;
     bool InterfaceManager::redirectMouseToTouch = false;
-
+    InterfaceManager::rotationLockModes InterfaceManager::rotationLock = InterfaceManager::NOROTATIONLOCK;
+    
     InterfaceObject* InterfaceManager::addObject(InterfaceObject* obj) {
         intObjs.push_back(obj);
         return intObjs.back();
@@ -330,11 +331,37 @@ namespace EAVIGUI {
     }
     
     void InterfaceManager::deviceOrientationChanged(int newOrientation) {
-        interfaceObjectVector liveObjectList = InterfaceManager::getLiveObjectList();
-        int i = liveObjectList->size();
-        while(i--) {
-            liveObjectList->at(i)->deviceOrientationChanged(newOrientation);
-        }        
+        if (rotationLock != ALLROTATIONLOCK ) {
+            bool doRotation = true;
+            if (rotationLock == PORTRAITROTATIONLOCK && (newOrientation == 3 || newOrientation == 4)) {
+                doRotation = false;
+            }
+            if (rotationLock == LANDSCAPEROTATIONLOCK && (newOrientation == 1 || newOrientation == 2)) {
+                doRotation = false;
+            }
+            if (doRotation) {
+                interfaceObjectVector liveObjectList = InterfaceManager::getLiveObjectList();
+                int i = liveObjectList->size();
+                while(i--) {
+                    liveObjectList->at(i)->deviceOrientationChanged(newOrientation);
+                }
+            }
+        }
+    }
+
+    void InterfaceManager::setRotationLock(InterfaceManager::rotationLockModes newlock) {
+        rotationLock = newlock;
+    }
+    
+    InterfaceManager::rotationLockModes InterfaceManager::getRotationLock() {
+        return rotationLock;
+    }
+    
+    void InterfaceManager::setScreenRotations(screenRotations newMode) {
+        for(int i=0; i < intObjs.size(); i++) {
+            intObjs[i]->setScreenRotation(newMode);
+            intObjs[i]->invalidate();
+        }
     }
 
     

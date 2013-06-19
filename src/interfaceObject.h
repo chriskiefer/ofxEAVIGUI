@@ -53,10 +53,6 @@ namespace EAVIGUI {
         ROTMODE_NONE, ROTMODE_REFLECT, ROTMODE_ROTATE, ROTMODE_SPECIFY
     };
 
-    enum rotationLockModes {
-        NONE, LANDSCAPELOCK, PORTRAITLOCK
-    };
-    
     class InterfaceObject
     {
 

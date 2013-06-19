@@ -54,6 +54,11 @@ namespace EAVIGUI {
     class InterfaceManager {
     public:
         
+        enum rotationLockModes {
+            NOROTATIONLOCK, LANDSCAPEROTATIONLOCK, PORTRAITROTATIONLOCK, ALLROTATIONLOCK
+        };
+        
+        
         static InterfaceObject* addObject(InterfaceObject* obj);
         static void addObjects(InterfaceObjectGroup objs);        
         static InterfaceObject* addPanel(InterfaceObject* obj);
@@ -87,6 +92,9 @@ namespace EAVIGUI {
         
         static bool redirectMouseToTouch;
         static void deviceOrientationChanged(int newOrientation);
+        static void setRotationLock(rotationLockModes newlock);
+        static rotationLockModes getRotationLock();
+        static void setScreenRotations(screenRotations newMode);
 
     private:
         static InterfaceObjectGroup intObjs;
@@ -96,6 +104,7 @@ namespace EAVIGUI {
         static InterfaceObject* getTargetObject(ofTouchEventArgs &touch);
         static InterfaceObject* touchingObject;
         static interfaceObjectVector currentModalGroup;
+        static rotationLockModes rotationLock;
 
 
         
