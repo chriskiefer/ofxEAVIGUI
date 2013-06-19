@@ -30,10 +30,6 @@
 #include "ofMain.h"
 #include "TargetConditionals.h"
 
-#ifdef TARGET_OF_IPHONE
-    #include "ofxiPhoneAlerts.h"
-#endif
-
 namespace EAVIGUI {
 
     class InterfaceObject;
@@ -57,10 +53,11 @@ namespace EAVIGUI {
         ROTMODE_NONE, ROTMODE_REFLECT, ROTMODE_ROTATE, ROTMODE_SPECIFY
     };
 
-    class InterfaceObject 
-#ifdef TARGET_OF_IPHONE
-    : public ofxiPhoneAlertsListener 
-#endif
+    enum rotationLockModes {
+        NONE, LANDSCAPELOCK, PORTRAITLOCK
+    };
+    
+    class InterfaceObject
     {
 
     public:

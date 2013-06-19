@@ -37,6 +37,7 @@ namespace EAVIGUI {
     interfaceObjectVector InterfaceManager::currentModalGroup = NULL;
     touchListenerProxy InterfaceManager::touchListener;
     eventProxy InterfaceManager::eventListener;
+    iPhoneEventsProxy InterfaceManager::iPhoneListener;
     map<string, ofTrueTypeFont> InterfaceManager::fontList;
     float InterfaceManager::deviceScaleMod = 1.0;
     bool InterfaceManager::redirectMouseToTouch = false;
@@ -70,6 +71,10 @@ namespace EAVIGUI {
         ofAddListener(ofEvents().mouseDragged, &eventListener, &eventProxy::mouseDragged);
         ofAddListener(ofEvents().mouseMoved, &eventListener, &eventProxy::mouseMoved);
 #endif
+#ifdef TARGET_OF_IPHONE
+        ofxiPhoneAlerts.addListener(&InterfaceManager::iPhoneListener);
+#endif
+        
         for(int i=0; i < intObjs.size(); i++) {
             intObjs[i]->setup();
         }
@@ -324,6 +329,15 @@ namespace EAVIGUI {
         }
     }
     
+    void InterfaceManager::deviceOrientationChanged(int newOrientation) {
+        interfaceObjectVector liveObjectList = InterfaceManager::getLiveObjectList();
+        int i = liveObjectList->size();
+        while(i--) {
+            liveObjectList->at(i)->deviceOrientationChanged(newOrientation);
+        }        
+    }
+
+    
     void InterfaceManager::exit() {
         for (int i=0; i < intObjs.size(); i++) {
             delete intObjs[i];
@@ -382,5 +396,13 @@ namespace EAVIGUI {
         InterfaceManager::mouseMoved(args.x, args.y);
     }
     
+#ifdef TARGET_OF_IPHONE
+    
+    void iPhoneEventsProxy::deviceOrientationChanged(int newOrientation) {
+        cout << "Orientation change: " << newOrientation << endl;
+        InterfaceManager::deviceOrientationChanged(newOrientation);
+    }
+    
+#endif
 
 };

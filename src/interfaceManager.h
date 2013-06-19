@@ -38,6 +38,10 @@
 #include "imageButton.h"
 #include <map>
 
+#ifdef TARGET_OF_IPHONE
+#include "ofxiPhoneAlerts.h"
+#endif
+
 namespace EAVIGUI {
 
     typedef vector<InterfaceObject*> InterfaceObjectGroup;
@@ -45,6 +49,7 @@ namespace EAVIGUI {
 
     class touchListenerProxy;
     class eventProxy;
+    class iPhoneEventsProxy;
 
     class InterfaceManager {
     public:
@@ -73,7 +78,7 @@ namespace EAVIGUI {
         static InterfaceObject *beingTouched();
         static touchListenerProxy touchListener;
         static eventProxy eventListener;
-        
+        static iPhoneEventsProxy iPhoneListener;
         static map<string, ofTrueTypeFont> fontList;
         static void addFont(string identifier, string fontname, int size);
         
@@ -81,6 +86,7 @@ namespace EAVIGUI {
         static float deviceScaleMod;
         
         static bool redirectMouseToTouch;
+        static void deviceOrientationChanged(int newOrientation);
 
     private:
         static InterfaceObjectGroup intObjs;
@@ -115,6 +121,14 @@ namespace EAVIGUI {
         void mouseDragged(ofMouseEventArgs &args);
         void mouseMoved(ofMouseEventArgs &args);
     };
+    
+#ifdef TARGET_OF_IPHONE
+
+    class iPhoneEventsProxy : public ofxiPhoneAlertsListener {
+    public:
+        void deviceOrientationChanged(int newOrientation);
+    };
+#endif
     
 
 };

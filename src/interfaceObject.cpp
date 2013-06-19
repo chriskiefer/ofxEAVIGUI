@@ -84,9 +84,6 @@ namespace EAVIGUI {
     
     
     void InterfaceObject::setup() {
-#ifdef TARGET_OF_IPHONE
-        ofxiPhoneAlerts.addListener(this);
-#endif
     }
     
     void InterfaceObject::allocateFBO() {
