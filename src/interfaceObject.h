@@ -29,6 +29,7 @@
 
 #include "ofMain.h"
 #include "TargetConditionals.h"
+#include <list>
 
 namespace EAVIGUI {
 
@@ -59,7 +60,7 @@ namespace EAVIGUI {
     public:
 
         enum InterfaceManagerEvents {
-            TOUCHDOUBLETAP, TOUCHDOWN, TOUCHMOVED, TOUCHUP, MOUSEPRESSED, MOUSERELEASED, MOUSEDRAGGED, MOUSEMOVED
+            TOUCHDOUBLETAP, TOUCHDOWN, TOUCHMOVED, TOUCHUP, TOUCHEXIT, MOUSEPRESSED, MOUSERELEASED, MOUSEDRAGGED, MOUSEMOVED
         };
         
         
@@ -81,7 +82,7 @@ namespace EAVIGUI {
         virtual void touchUp(ofTouchEventArgs &touch);
         virtual void touchDoubleTap(ofTouchEventArgs &touch);
         virtual void touchMoved(ofTouchEventArgs &touch);
-        virtual void touchExit();
+        virtual void touchExit(ofTouchEventArgs &touch);
         
         
         void addChild(InterfaceObject* child);
@@ -173,6 +174,8 @@ namespace EAVIGUI {
         void updateRotatedSize();
         void changeWidth(float neww);
         void changeHeight(float newh);
+        
+        list<int> touches;
     private:
         void show();
         void hide();

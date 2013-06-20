@@ -371,6 +371,7 @@ namespace EAVIGUI {
     }
     
     void InterfaceObject::touchDown(ofTouchEventArgs &touch) {
+        touches.push_back(touch.id);
         sendTouchCallback(InterfaceObject::TOUCHDOWN, touch);
     }
     
@@ -379,13 +380,18 @@ namespace EAVIGUI {
     }
     
     void InterfaceObject::touchMoved(ofTouchEventArgs &touch) {
+        touches.remove(touch.id);
+        touches.push_back(touch.id);
         sendTouchCallback(InterfaceObject::TOUCHMOVED, touch);
     }
     
-    void InterfaceObject::touchExit() {
+    void InterfaceObject::touchExit(ofTouchEventArgs &touch) {
+        touches.remove(touch.id);
+        sendTouchCallback(InterfaceObject::TOUCHEXIT, touch);
     }
     
     void InterfaceObject::touchUp(ofTouchEventArgs &touch) {
+        touches.remove(touch.id);
         sendTouchCallback(InterfaceObject::TOUCHUP, touch);
     }
     

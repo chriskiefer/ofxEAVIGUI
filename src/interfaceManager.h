@@ -80,7 +80,7 @@ namespace EAVIGUI {
         static void showHideModalGroup(InterfaceObjectGroup *modalGroup, bool visible);
         static bool modalShowing() {return currentModalGroup != NULL;}
         
-        static InterfaceObject *beingTouched();
+//        static InterfaceObject *beingTouched();
         static touchListenerProxy touchListener;
         static eventProxy eventListener;
         static iPhoneEventsProxy iPhoneListener;
@@ -102,9 +102,10 @@ namespace EAVIGUI {
         static interfaceObjectVector getLiveObjectList();
         static InterfaceObject* draggingTarget;
         static InterfaceObject* getTargetObject(ofTouchEventArgs &touch);
-        static InterfaceObject* touchingObject;
         static interfaceObjectVector currentModalGroup;
         static rotationLockModes rotationLock;
+        static map<int, InterfaceObject*> touchedObjects;
+
 
 
         

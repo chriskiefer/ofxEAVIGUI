@@ -33,7 +33,6 @@ namespace EAVIGUI {
     vector<InterfaceObject*> InterfaceManager::intObjs;
     vector<InterfaceObject*> InterfaceManager::panels;
     InterfaceObject* InterfaceManager::draggingTarget = NULL;
-    InterfaceObject* InterfaceManager::touchingObject = NULL;
     interfaceObjectVector InterfaceManager::currentModalGroup = NULL;
     touchListenerProxy InterfaceManager::touchListener;
     eventProxy InterfaceManager::eventListener;
@@ -42,6 +41,7 @@ namespace EAVIGUI {
     float InterfaceManager::deviceScaleMod = 1.0;
     bool InterfaceManager::redirectMouseToTouch = false;
     InterfaceManager::rotationLockModes InterfaceManager::rotationLock = InterfaceManager::NOROTATIONLOCK;
+    map<int, InterfaceObject*> InterfaceManager::touchedObjects;
     
     InterfaceObject* InterfaceManager::addObject(InterfaceObject* obj) {
         intObjs.push_back(obj);
@@ -93,7 +93,7 @@ namespace EAVIGUI {
         }	
         for(int i=0; i < panels.size(); i++) {
             if (panels[i]->isVisible()) {
-                ofSetColor(200,200,200,200);
+                ofSetColor(200, 200, 200, 200);
                 ofFill();
                 ofRect(0, 0, ofGetWidth(), ofGetHeight());
                 panels[i]->draw();
@@ -241,66 +241,67 @@ namespace EAVIGUI {
         //cout << "Touch down " << touch.x << "," << touch.y << endl;
         InterfaceObject *obj = InterfaceManager::getTargetObject(touch);
         if (NULL != obj) {
-            //cout << "touch down: " << obj->id << endl;
-            InterfaceManager::touchingObject = obj;
+//            cout << "touch down: " << obj->id << endl;
+            touchedObjects[touch.id] = obj;
             obj->touchDown(touch);
         }
         
     }
-
+    
     void InterfaceManager::touchMoved(ofTouchEventArgs &touch) {
-        //cout << "Touch moved\n";
-        InterfaceObject *obj = InterfaceManager::getTargetObject(touch);
+//        cout << "Touch moved " << touch.id << endl;
+        InterfaceObject *obj = getTargetObject(touch);
+        //in an object?
         if (NULL != obj) {
-            //cout << "Touch moved: " << obj->id << endl;
-            if (InterfaceManager::touchingObject != NULL && InterfaceManager::touchingObject != obj) {
+//            cout << "Touch " << touch.id << " moved to " << obj->id << endl;
+            //has this touch just exited from another object?
+            if (touchedObjects[touch.id] != NULL && touchedObjects[touch.id] != obj) {
                 //cout << "Touch exit: " << touchingObject->id << endl;
-                InterfaceManager::touchingObject->touchExit();
+                touchedObjects[touch.id]->touchExit(touch);
             }
-            InterfaceManager::touchingObject = obj;
+            touchedObjects[touch.id] = obj;
             obj->touchMoved(touch);
         }else{
-            if (InterfaceManager::touchingObject != NULL) {
-                //cout << "Touch exit null: " << touchingObject->id << endl;
-                InterfaceManager::touchingObject->touchExit();
+            //not on an object
+//            cout << "Touch " << touch.id << " moved, no object found\n";
+            //trigger an exit if this touch was on an object and that object isn't still being touched
+            if (touchedObjects[touch.id] != NULL) {
+//                cout << "Touch exit to space: " << touchedObjects[touch.id]->id << endl;
+                touchedObjects[touch.id]->touchExit(touch);
+                touchedObjects[touch.id] = NULL;
             }
-            InterfaceManager::touchingObject = NULL;
         }
     }
 
     void InterfaceManager::touchUp(ofTouchEventArgs &touch) {
-        //cout << "Touch up " << touch.x << "," << touch.y << endl;
-        InterfaceObject *obj = InterfaceManager::touchingObject;
-        if (NULL == obj) 
-            obj = InterfaceManager::getTargetObject(touch);
-        else {
-            obj->transformTouchForScreenRotation(touch);
-        }
+//        cout << "Touch up " << touch.x << "," << touch.y << endl;
+        InterfaceObject *obj = InterfaceManager::getTargetObject(touch);
         if (NULL != obj) {
-            //cout << "touch up: " << obj->id << endl;
-            InterfaceManager::touchingObject = NULL;
+//            cout << "touch up: " << obj->id << endl;
+            touchedObjects[touch.id] = NULL;
             obj->touchUp(touch);
+            touchedObjects[touch.id] = NULL;
         }
     }
-
 
     void InterfaceManager::touchDoubleTap(ofTouchEventArgs &touch) {
         InterfaceObject *obj = InterfaceManager::getTargetObject(touch);
         if (NULL != obj) {
             obj->touchDoubleTap(touch);
         }
-        
     }
 
     void InterfaceManager::touchCancelled(ofTouchEventArgs &touch) {
-        
     }
 
 
     void InterfaceManager::showHideModalGroup(InterfaceObjectGroup *modalGroup, bool visible) {
-        if (NULL != InterfaceManager::touchingObject) {
-            InterfaceManager::touchingObject->touchExit();
-            InterfaceManager::touchingObject = NULL;
+        //cancel all touches
+        for (std::map<int,InterfaceObject*>::iterator it=touchedObjects.begin(); it!=touchedObjects.end(); ++it) {
+            if (NULL != it->second) {
+//                it->second->touchExit();
+                it->second = NULL;
+            }
         }
         for(int i=0; i < modalGroup->size(); i++) {
             modalGroup->at(i)->setVisible(visible);
@@ -314,9 +315,9 @@ namespace EAVIGUI {
         }
     }
 
-    InterfaceObject* InterfaceManager::beingTouched() {
-        return InterfaceManager::touchingObject;
-    }
+//    InterfaceObject* InterfaceManager::beingTouched() {
+//        return InterfaceManager::touchingObject;
+//    }
 
     void InterfaceManager::addFont(string identifier, string fontname, int size) {
         InterfaceManager::fontList[identifier] = ofTrueTypeFont();

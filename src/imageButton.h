@@ -29,6 +29,7 @@
 
 #include "interfaceObject.h"
 #include <iostream>
+#include <list>
 
 using namespace std;
 
@@ -46,7 +47,7 @@ namespace EAVIGUI {
         bool canInteractAt(int x, int y);
         void touchDown(ofTouchEventArgs &touch);
         void touchUp(ofTouchEventArgs &touch);
-        void touchExit();
+        void touchExit(ofTouchEventArgs &touch);
     protected:
         void init();
         virtual void drawToBuffer();

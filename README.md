@@ -11,7 +11,7 @@ Features:
 - rotatable controls
 - controls can follow screen rotation in iOS
 - graphical effects can be added to any control
-
+- handles multitouch, within single controls and across multiple controls
 
 
 

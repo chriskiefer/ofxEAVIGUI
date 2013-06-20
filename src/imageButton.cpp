@@ -63,6 +63,7 @@ namespace EAVIGUI {
 
  
     void ImageButton::drawToBuffer() {
+        ofEnableAlphaBlending();
         ofSetColor(imColor);
         if (isTouched) {
             touchIm.draw(0,0,w,h);
@@ -73,19 +74,20 @@ namespace EAVIGUI {
     
     void ImageButton::touchDown(ofTouchEventArgs &touch) {
         InterfaceObject::touchDown(touch);
+        touches.push_back(touch.id);
         isTouched = true;
         invalidate();
     }
     
     void ImageButton::touchUp(ofTouchEventArgs &touch) {
         InterfaceObject::touchUp(touch);
-        isTouched = false;
+        isTouched = touches.size() > 0;
         invalidate();
     }
     
-    void ImageButton::touchExit() {
-        InterfaceObject::touchExit();
-        isTouched = false;
+    void ImageButton::touchExit(ofTouchEventArgs &touch) {
+        InterfaceObject::touchExit(touch);
+        isTouched = touches.size() > 0;
         invalidate();
     }
 
