@@ -37,6 +37,7 @@
 #include "EAVIGUI.label.h"
 #include "EAVIGUI.imageButton.h"
 #include "EAVIGUI.panel.h"
+#include "EAVIGUI.checkbox.h"
 #include <map>
 
 #ifdef TARGET_OF_IPHONE
