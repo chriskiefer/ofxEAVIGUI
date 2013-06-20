@@ -24,39 +24,32 @@
  *	OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef sonicTag2_imageButton_h
-#define sonicTag2_imageButton_h
+#ifndef _LABEL_H
+#define _LABEL_H
 
-#include "interfaceObject.h"
+#include "EAVIGUI.interfaceObject.h"
 #include <iostream>
-#include <list>
+//#include "ofmain.h"
 
 using namespace std;
 
 namespace EAVIGUI {
-  
-    class ImageButton : public InterfaceObject {
-    public:
-        ImageButton(InterfaceListener *_listener, int _id, int _x, int _y, string imageFileName, string touchImageFilename);
-        ImageButton(InterfaceListener *_listener, int _id, int _x, int _y, ofImage _im, ofImage _touchIm);
-        void setColor(ofColor newCol) {imColor = newCol; invalidate();}
-        ofImage getImage() {return im;}
-        void loadNewImage(string imageFileName);
-        void setCanTouchTranparency(bool newVal);
-        bool getCanTouchTranparency();
-        bool canInteractAt(int x, int y);
-        void touchDown(ofTouchEventArgs &touch);
-        void touchUp(ofTouchEventArgs &touch);
-        void touchExit(ofTouchEventArgs &touch);
-    protected:
-        void init();
-        virtual void drawToBuffer();
-        ofImage im, touchIm;
-        ofColor imColor;
-        bool canTouchTranparency;  //if false, reject touches on transparent pixels
-        bool isTouched;
-    };
-    
-};
 
+    class Label : public InterfaceObject {
+    public:
+        Label(InterfaceListener *_listener, int _id, int _x, int _y, int _w, int _h, ofTrueTypeFont *_font, string _text, ofColor _colour);
+        void setText(string t);
+        void fitToText();
+        void setColour(ofColor col);
+        void setBackgroundColour(ofColor col);
+    protected:
+        ofTrueTypeFont *font;
+        ofColor colour, backgroundColour;
+        void drawToBuffer();
+        string text;
+        
+    };
+
+}
 #endif
+

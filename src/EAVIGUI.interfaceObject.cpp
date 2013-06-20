@@ -24,9 +24,9 @@
  *	OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include "interfaceObject.h"
-#include "interfaceManager.h"
-#include "baseEffect.h"
+#include "EAVIGUI.interfaceObject.h"
+#include "EAVIGUI.interfaceManager.h"
+#include "EAVIGUI.baseEffect.h"
 
 //#define GUIDEGBUG
 

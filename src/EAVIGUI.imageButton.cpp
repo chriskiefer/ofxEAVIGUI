@@ -30,7 +30,7 @@
  */
 
 #include <iostream>
-#include "imageButton.h"
+#include "EAVIGUI.imageButton.h"
 
 namespace EAVIGUI {
     

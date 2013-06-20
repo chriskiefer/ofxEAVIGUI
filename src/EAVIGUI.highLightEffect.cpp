@@ -1,9 +1,8 @@
 //
-//  baseEffect.cpp
+//  highLightEffect.cpp
 //  FishPolice
 //
 //  Created by Chris on 11/06/2013.
-//
 /*
  *  EAVIGUI
  *  Copyright 2010 Chris Kiefer. All rights reserved.
@@ -30,29 +29,26 @@
  *	OTHER DEALINGS IN THE SOFTWARE.
  */
 
-
-#include "baseEffect.h"
+#include "EAVIGUI.highLightEffect.h"
 
 namespace EAVIGUI {
 
-    baseEffect::baseEffect() {
-        invalidated = true;
+    highLightEffect::highLightEffect(ofColor newcol) : col(newcol) {
+        baseEffect::baseEffect();
     }
+    
+    void highLightEffect::draw() {
+        ofFill();
+        ofSetColor(col);
+        glBlendFunc(GL_DST_COLOR, GL_ZERO);
+//        ofSetColor(0,255,0,fabs(sin(ofGetFrameNum() / 3.0)) * 10.0);
+//        ofNoFill();
+//        for (int i = 0; i < 400; i++){
+//            ofLine(ofRandom(0,500), ofRandom(0,500), ofRandom(0,500), ofRandom(0,500));
+//        }
 
-    bool baseEffect::isInvalidated() {
-        return invalidated;
-    }
-
-    void baseEffect::invalidate() {
-        invalidated = true;
-    }
-
-    void baseEffect::validate() {
-        invalidated = false;
-    }
-
-    void baseEffect::setParent(InterfaceObject *parent) {
-        parentObject = parent;
+        ofRect(0, 0, this->parentObject->getWidth(), this->parentObject->getHeight());
+        glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
     }
 
 };

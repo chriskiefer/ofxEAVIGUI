@@ -1,3 +1,8 @@
+//
+//  panel.h
+//
+//  Created by Chris on 20/06/2013.
+//
 /*
  *  EAVIGUI
  *  Copyright 2010 Chris Kiefer. All rights reserved.
@@ -24,32 +29,25 @@
  *	OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef _LABEL_H
-#define _LABEL_H
+#ifndef __SonicTag3__panel__
+#define __SonicTag3__panel__
 
-#include "interfaceObject.h"
+#include "EAVIGUI.interfaceObject.h"
 #include <iostream>
-//#include "ofmain.h"
 
 using namespace std;
 
 namespace EAVIGUI {
-
-    class Label : public InterfaceObject {
+    
+    class Panel : public InterfaceObject {
     public:
-        Label(InterfaceListener *_listener, int _id, int _x, int _y, int _w, int _h, ofTrueTypeFont *_font, string _text, ofColor _colour);
-        void setText(string t);
-        void fitToText();
+        Panel(InterfaceListener *_listener, int _id, int _x, int _y, int _w, int _h, ofColor _colour, ofColor _borderColour);
         void setColour(ofColor col);
-        void setBackgroundColour(ofColor col);
     protected:
-        ofTrueTypeFont *font;
-        ofColor colour, backgroundColour;
+        ofColor colour, borderColour;
         void drawToBuffer();
-        string text;
         
     };
-
+    
 }
-#endif
-
+#endif /* defined(__SonicTag3__panel__) */

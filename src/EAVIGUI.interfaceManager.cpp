@@ -25,8 +25,8 @@
  *	OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include "interfaceManager.h"
-#include "geomFunctions.h"
+#include "EAVIGUI.interfaceManager.h"
+#include "EAVIGUI.geomFunctions.h"
 
 namespace EAVIGUI {
 

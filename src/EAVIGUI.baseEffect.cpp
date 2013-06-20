@@ -1,5 +1,5 @@
 //
-//  baseEffect.h
+//  baseEffect.cpp
 //  FishPolice
 //
 //  Created by Chris on 11/06/2013.
@@ -30,28 +30,29 @@
  *	OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef __FishPolice__baseEffect__
-#define __FishPolice__baseEffect__
 
-#include <iostream>
-#include "ofMain.h"
-#include "interfaceObject.h"
+#include "EAVIGUI.baseEffect.h"
 
 namespace EAVIGUI {
 
-    class InterfaceObject;
-    
-    class baseEffect {
-    public:
-        baseEffect();
-        virtual void draw(){};
-        virtual bool isInvalidated();
-        void invalidate();
-        void validate();
-        void setParent(InterfaceObject *parent);
-    protected:
-        bool invalidated;
-        InterfaceObject *parentObject;
-    };
+    baseEffect::baseEffect() {
+        invalidated = true;
+    }
+
+    bool baseEffect::isInvalidated() {
+        return invalidated;
+    }
+
+    void baseEffect::invalidate() {
+        invalidated = true;
+    }
+
+    void baseEffect::validate() {
+        invalidated = false;
+    }
+
+    void baseEffect::setParent(InterfaceObject *parent) {
+        parentObject = parent;
+    }
+
 };
-#endif /* defined(__FishPolice__baseEffect__) */

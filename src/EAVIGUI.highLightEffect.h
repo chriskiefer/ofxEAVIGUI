@@ -34,7 +34,7 @@
 #define __FishPolice__highLightEffect__
 
 #include <iostream>
-#include "baseEffect.h"
+#include "EAVIGUI.baseEffect.h"
 
 namespace EAVIGUI {
 

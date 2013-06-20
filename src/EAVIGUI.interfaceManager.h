@@ -33,9 +33,10 @@
 #define _INTERFACE_MANAGER_H
 
 #include "ofMain.h"
-#include "interfaceObject.h"
-#include "label.h"
-#include "imageButton.h"
+#include "EAVIGUI.interfaceObject.h"
+#include "EAVIGUI.label.h"
+#include "EAVIGUI.imageButton.h"
+#include "EAVIGUI.panel.h"
 #include <map>
 
 #ifdef TARGET_OF_IPHONE
@@ -45,7 +46,7 @@
 namespace EAVIGUI {
 
     typedef vector<InterfaceObject*> InterfaceObjectGroup;
-    typedef vector<InterfaceObject*>* interfaceObjectVector;
+    typedef InterfaceObjectGroup* interfaceObjectVector;
 
     class touchListenerProxy;
     class eventProxy;
