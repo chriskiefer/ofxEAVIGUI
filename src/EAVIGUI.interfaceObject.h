@@ -153,6 +153,7 @@ namespace EAVIGUI {
         void calcScaleMods();
         ofFbo *tex;
         bool invalidated;
+        bool enabled;
         
         vector<InterfaceObject*> children;
         bool visible;
@@ -187,7 +188,11 @@ namespace EAVIGUI {
 
         
     };
-
+    
+   
+    //from http://forum.openframeworks.cc/index.php?topic=4448.0
+    void quadraticBezierVertex(float cpx, float cpy, float x, float y, float prevX, float prevY);
+    void roundedRect(float x, float y, float w, float h, float r);
 };
 
 

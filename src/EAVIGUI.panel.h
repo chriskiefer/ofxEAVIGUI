@@ -43,8 +43,10 @@ namespace EAVIGUI {
     public:
         Panel(InterfaceListener *_listener, int _id, int _x, int _y, int _w, int _h, ofColor _colour, ofColor _borderColour);
         void setColour(ofColor col);
+        void setCornerRadius(float val);
     protected:
         ofColor colour, borderColour;
+        float cornerRadius;
         void drawToBuffer();
         
     };

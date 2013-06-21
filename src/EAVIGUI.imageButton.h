@@ -48,6 +48,7 @@ namespace EAVIGUI {
         void touchDown(ofTouchEventArgs &touch);
         void touchUp(ofTouchEventArgs &touch);
         void touchExit(ofTouchEventArgs &touch);
+        void setEnabled(bool newEnabled);
     protected:
         void init();
         virtual void drawToBuffer();

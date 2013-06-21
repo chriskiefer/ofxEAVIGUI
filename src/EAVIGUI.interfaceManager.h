@@ -63,7 +63,7 @@ namespace EAVIGUI {
         
         
         static InterfaceObject* addObject(InterfaceObject* obj);
-        static void addObjects(InterfaceObjectGroup objs);        
+        static void addObjects(InterfaceObjectGroup &objs);
         static InterfaceObject* addPanel(InterfaceObject* obj);
         static InterfaceObject* lastObject();
         static void setup();

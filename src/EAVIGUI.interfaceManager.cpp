@@ -48,7 +48,7 @@ namespace EAVIGUI {
         return intObjs.back();
     }
 
-    void InterfaceManager::addObjects(InterfaceObjectGroup objs) {
+    void InterfaceManager::addObjects(InterfaceObjectGroup &objs) {
         for(int i=0; i < objs.size(); i++)
             intObjs.push_back(objs[i]);
     }
@@ -301,6 +301,12 @@ namespace EAVIGUI {
             if (NULL != it->second) {
 //                it->second->touchExit();
                 it->second = NULL;
+            }
+        }
+        //disable other controls
+        for (int i=0; i < intObjs.size(); i++) {
+            if (std::find(modalGroup->begin(), modalGroup->end(), intObjs[i]) == modalGroup->end()) {
+                intObjs[i]->setEnabled(visible);
             }
         }
         for(int i=0; i < modalGroup->size(); i++) {

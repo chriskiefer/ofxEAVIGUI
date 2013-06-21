@@ -112,6 +112,14 @@ namespace EAVIGUI {
         }
         return ok;
     }
+    
+    void ImageButton::setEnabled(bool newEnabled) {
+        if(!newEnabled) {
+            isTouched = false;
+        }
+        InterfaceObject::setEnabled(newEnabled);
+    }
+
 
 
     
