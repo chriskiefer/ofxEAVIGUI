@@ -306,7 +306,7 @@ namespace EAVIGUI {
         //disable other controls
         for (int i=0; i < intObjs.size(); i++) {
             if (std::find(modalGroup->begin(), modalGroup->end(), intObjs[i]) == modalGroup->end()) {
-                intObjs[i]->setEnabled(visible);
+                intObjs[i]->setEnabled(!visible);
             }
         }
         for(int i=0; i < modalGroup->size(); i++) {
