@@ -454,25 +454,31 @@ namespace EAVIGUI {
     }
     
     void InterfaceObject::setScreenRotation(screenRotations rot) {
-        switch(rot) {
-            case ROT0: screenRotation = 0;
-                xScreenRotShift = 0;
-                yScreenRotShift = 0;
-                break;
-            case ROT90: screenRotation = 90;
-                xScreenRotShift = h;
-                yScreenRotShift = 0;
-                break;
-            case ROT180: screenRotation = 180;
-                xScreenRotShift = w;
-                yScreenRotShift = h;
-                break;
-            case ROT270: screenRotation = 270;
-                xScreenRotShift = 0;
-                yScreenRotShift = w;
-                break;
-        };
-        currentScreenOrientation = rot;
+        if (ROTMODE_NONE != screenRotMode) {
+            switch(rot) {
+                case ROT0:
+                    screenRotation = 0;
+                    xScreenRotShift = 0;
+                    yScreenRotShift = 0;
+                    break;
+                case ROT90:
+                    screenRotation = 90;
+                    xScreenRotShift = h;
+                    yScreenRotShift = 0;
+                    break;
+                case ROT180:
+                    screenRotation = 180;
+                    xScreenRotShift = w;
+                    yScreenRotShift = h;
+                    break;
+                case ROT270:
+                    screenRotation = 270;
+                    xScreenRotShift = 0;
+                    yScreenRotShift = w;
+                    break;
+            };
+            currentScreenOrientation = rot;
+        }
     }
     
     void InterfaceObject::calcScaleMods() {
@@ -613,8 +619,8 @@ namespace EAVIGUI {
                 case 3: //OFXIPHONE_ORIENTATION_LANDSCAPE_LEFT
                     setScreenRotation(ROT90);
             }
+            updatePosition();
         }
-        updatePosition();
     };
     
     void InterfaceObject::updatePosition() {
