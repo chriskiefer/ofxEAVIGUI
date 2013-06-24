@@ -55,7 +55,6 @@ namespace EAVIGUI {
         ofImage im, touchIm;
         ofColor imColor;
         bool canTouchTranparency;  //if false, reject touches on transparent pixels
-        bool isTouched;
     };
     
 };

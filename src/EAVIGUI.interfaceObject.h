@@ -177,6 +177,7 @@ namespace EAVIGUI {
         void changeHeight(float newh);
         
         list<int> touches;
+        bool isTouched;
     private:
         void show();
         void hide();

@@ -36,6 +36,7 @@ namespace EAVIGUI {
         setHeight(_h);
         setIsInteractive(false);
         backgroundColour = ofColor(0,0,0,0);
+        touchedColour = backgroundColour;
     }
     
     void Label::fitToText() {
@@ -45,7 +46,7 @@ namespace EAVIGUI {
 
     void Label::drawToBuffer() {
         ofFill();
-        ofSetColor(backgroundColour);
+        ofSetColor(isTouched ? touchedColour : backgroundColour);
         ofRect(0,0, w, h);
         ofSetColor(colour);
         font->drawString(text, 0, font->getLineHeight());
@@ -67,4 +68,25 @@ namespace EAVIGUI {
         invalidate();
     }
     
+    void Label::setTouchDownColour(ofColor col) {
+        touchedColour = col;
+        invalidate();
+    }
+    
+    void Label::touchDown(ofTouchEventArgs &touch) {
+        InterfaceObject::touchDown(touch);
+        invalidate();
+    }
+    
+    void Label::touchUp(ofTouchEventArgs &touch) {
+        InterfaceObject::touchUp(touch);
+        invalidate();
+    }
+    
+    void Label::touchExit(ofTouchEventArgs &touch) {
+        InterfaceObject::touchExit(touch);
+        invalidate();
+    }
+
+
 }

@@ -74,20 +74,16 @@ namespace EAVIGUI {
     
     void ImageButton::touchDown(ofTouchEventArgs &touch) {
         InterfaceObject::touchDown(touch);
-        touches.push_back(touch.id);
-        isTouched = true;
         invalidate();
     }
     
     void ImageButton::touchUp(ofTouchEventArgs &touch) {
         InterfaceObject::touchUp(touch);
-        isTouched = touches.size() > 0;
         invalidate();
     }
     
     void ImageButton::touchExit(ofTouchEventArgs &touch) {
         InterfaceObject::touchExit(touch);
-        isTouched = touches.size() > 0;
         invalidate();
     }
 

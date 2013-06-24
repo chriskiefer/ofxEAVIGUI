@@ -42,9 +42,13 @@ namespace EAVIGUI {
         void fitToText();
         void setColour(ofColor col);
         void setBackgroundColour(ofColor col);
+        void setTouchDownColour(ofColor col);
+        void touchDown(ofTouchEventArgs &touch);
+        void touchUp(ofTouchEventArgs &touch);
+        void touchExit(ofTouchEventArgs &touch);
     protected:
         ofTrueTypeFont *font;
-        ofColor colour, backgroundColour;
+        ofColor colour, backgroundColour, touchedColour;
         void drawToBuffer();
         string text;
         

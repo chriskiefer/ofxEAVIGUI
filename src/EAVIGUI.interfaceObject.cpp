@@ -76,6 +76,7 @@ namespace EAVIGUI {
         pulsateMin = 0.5;
         pulsateMax = 1.0;
         enabled = true;
+        isTouched = false;
     }
     
     InterfaceObject::~InterfaceObject() {
@@ -375,6 +376,7 @@ namespace EAVIGUI {
     
     void InterfaceObject::touchDown(ofTouchEventArgs &touch) {
         touches.push_back(touch.id);
+        isTouched = true;
         sendTouchCallback(InterfaceObject::TOUCHDOWN, touch);
     }
     
@@ -390,11 +392,13 @@ namespace EAVIGUI {
     
     void InterfaceObject::touchExit(ofTouchEventArgs &touch) {
         touches.remove(touch.id);
+        isTouched = touches.size() > 0;
         sendTouchCallback(InterfaceObject::TOUCHEXIT, touch);
     }
     
     void InterfaceObject::touchUp(ofTouchEventArgs &touch) {
         touches.remove(touch.id);
+        isTouched = touches.size() > 0;
         sendTouchCallback(InterfaceObject::TOUCHUP, touch);
     }
     
