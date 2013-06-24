@@ -39,6 +39,8 @@
 #include "EAVIGUI.panel.h"
 #include "EAVIGUI.checkbox.h"
 #include "EAVIGUI.slider.h"
+#include "EAVIGUI.XYPad.h"
+
 #include <map>
 
 #ifdef TARGET_OF_IPHONE

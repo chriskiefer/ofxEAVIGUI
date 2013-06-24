@@ -423,6 +423,7 @@ namespace EAVIGUI {
     
     void InterfaceObject::changeWidth(float neww) {
         w = neww;
+        cx = w / 2;
         if (allocated) {
             deallocateFBO();
             allocateFBO();
@@ -431,6 +432,7 @@ namespace EAVIGUI {
     
     void InterfaceObject::changeHeight(float newh) {
         h = newh;
+        cy = h / 2;
         if (allocated) {
             deallocateFBO();
             allocateFBO();
@@ -654,21 +656,21 @@ namespace EAVIGUI {
     
     InterfaceObject* InterfaceObject::setScreenRotationAroundCenter() {
         screenRotMode = ROTMODE_ROTATE;
-        int cx = ofGetScreenWidth() / 2 ;
-        int cy = ofGetScreenHeight() / 2 ;
+        int scx = ofGetScreenWidth() / 2 ;
+        int scy = ofGetScreenHeight() / 2 ;
         ofPoint z;
-        z.x = x - cx;
-        z.y = cy - y;
+        z.x = x - scx;
+        z.y = scy - y;
         ofPoint r;
         r= rotate(z, -PI/2);
-        rotPt90.x =  r.x + cx - h;
-        rotPt90.y = cy - r.y;
+        rotPt90.x =  r.x + scx - h;
+        rotPt90.y = scy - r.y;
         r= rotate(z, PI);
-        rotPt180.x =  r.x + cx - w;
-        rotPt180.y = cy - r.y - h;
+        rotPt180.x =  r.x + scx - w;
+        rotPt180.y = scy - r.y - h;
         r= rotate(z, PI/2);
-        rotPt270.x =  r.x + cx;
-        rotPt270.y = cy - r.y - w;
+        rotPt270.x =  r.x + scx;
+        rotPt270.y = scy - r.y - w;
         setScreenRotation(currentScreenOrientation);
         updatePosition();        
         return this;

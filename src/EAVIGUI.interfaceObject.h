@@ -160,7 +160,7 @@ namespace EAVIGUI {
         mouseStates mouseState;
         InterfaceObject* parent;
         bool interactive;
-        int w, h, orgW, orgH;
+        int w, h, orgW, orgH, cx, cy;
         
         float scale, totalScale, xScaleMod, yScaleMod;
         int fboWidth, fboHeight;
