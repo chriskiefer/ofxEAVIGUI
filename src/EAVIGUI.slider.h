@@ -44,6 +44,7 @@ namespace EAVIGUI {
         enum sliderEvents {SLIDERMOVED};
         Slider(InterfaceListener *_listener, int _id, int _x, int _y, int _w, int _h, ofTrueTypeFont *_font, string _text, ofColor _textcolour, ofColor _backgroundColour, ofColor sliderColour);
         float getValue() {return value;}
+        void setValue(float val);
     protected:
         ofColor sliderColour;
         void drawToBuffer();

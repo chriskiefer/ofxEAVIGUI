@@ -39,10 +39,15 @@ namespace EAVIGUI {
     }
   
     void Slider::moveSlider(ofTouchEventArgs &touch) {
-        cout << touch.x << endl;
         value = (float)touch.x / (float)w;
         sendCallback(SLIDERMOVED);
         invalidate();
     }
+    
+    void Slider::setValue(float val) {
+        value = val;
+        invalidate();
+    }
+
 
 };
