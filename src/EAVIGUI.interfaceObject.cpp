@@ -27,6 +27,7 @@
 #include "EAVIGUI.interfaceObject.h"
 #include "EAVIGUI.interfaceManager.h"
 #include "EAVIGUI.baseEffect.h"
+#include "EAVIGUI.geomFunctions.h"
 
 //#define GUIDEGBUG
 
@@ -77,6 +78,11 @@ namespace EAVIGUI {
         pulsateMax = 1.0;
         enabled = true;
         isTouched = false;
+        anchorX = anchorY = 0;
+        lx=ly=0;
+        tx = ty = 0; //touchDown Point
+        touchVelocity = touchAcceleration = 0;
+        ex = ey = 0;
     }
     
     InterfaceObject::~InterfaceObject() {
@@ -377,6 +383,10 @@ namespace EAVIGUI {
     void InterfaceObject::touchDown(ofTouchEventArgs &touch) {
         touches.push_back(touch.id);
         isTouched = true;
+        tx = touch.x;
+        ty = touch.y;
+        touchVelocity = 0;
+        touchAcceleration = 0;        
         sendTouchCallback(InterfaceObject::TOUCHDOWN, touch);
     }
     
@@ -385,14 +395,26 @@ namespace EAVIGUI {
     }
     
     void InterfaceObject::touchMoved(ofTouchEventArgs &touch) {
+        if (touches.size() > 0) {
+            float newTouchVelocity = ofDist(lx, ly, touch.x, touch.y);
+            touchAcceleration = newTouchVelocity - touchVelocity;
+            touchVelocity = newTouchVelocity;
+        }else{
+            touchVelocity = 0;
+            touchAcceleration = 0;
+        }
         touches.remove(touch.id);
         touches.push_back(touch.id);
         sendTouchCallback(InterfaceObject::TOUCHMOVED, touch);
+        lx = touch.x;
+        ly = touch.y;
     }
     
     void InterfaceObject::touchExit(ofTouchEventArgs &touch) {
         touches.remove(touch.id);
         isTouched = touches.size() > 0;
+        ex = touch.x;
+        ey = touch.y;
         sendTouchCallback(InterfaceObject::TOUCHEXIT, touch);
     }
     
@@ -740,6 +762,20 @@ namespace EAVIGUI {
         return rotation;
     }
     
+    void InterfaceObject::getTouchDownPoint(int &_x, int &_y) {
+        _x = tx;
+        _y = ty;
+    }
+
+    void InterfaceObject::analyseExitGesture(bool &flick, float &angle) {
+        flick = false;
+        angle = 0;
+        cout << touchVelocity << ", " << touchAcceleration <<  endl;
+        if (touchVelocity > min(getScaledWidth(), getScaledHeight()) / 4.0 ) {
+            flick = true;
+            angle = geom::angleBetween2(ex, ey, tx, ty);
+        }
+    }
     //from http://forum.openframeworks.cc/index.php?topic=4448.0
     void quadraticBezierVertex(float cpx, float cpy, float x, float y, float prevX, float prevY) {
         float cp1x = prevX + 2.0/3.0*(cpx - prevX);
@@ -763,6 +799,7 @@ namespace EAVIGUI {
         quadraticBezierVertex(x, y, x+r, y, x, y+r);
         ofEndShape();
     }
+
 
     
 };

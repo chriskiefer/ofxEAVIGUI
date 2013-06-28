@@ -141,7 +141,8 @@ namespace EAVIGUI {
         
         void setRotation(float angle);
         float getRotation();
-        
+        void getTouchDownPoint(int &x, int &y);
+        void analyseExitGesture(bool &flick, float &angle);
     protected:
         InterfaceObject();
         void init(InterfaceListener *_listener, int _id, int _x, int _y);
@@ -160,8 +161,8 @@ namespace EAVIGUI {
         mouseStates mouseState;
         InterfaceObject* parent;
         bool interactive;
-        int w, h, orgW, orgH, cx, cy;
-        
+        int w, h, orgW, orgH, cx, cy, lx, ly, tx, ty, ex, ey;
+        float touchVelocity, touchAcceleration;
         float scale, totalScale, xScaleMod, yScaleMod;
         int fboWidth, fboHeight;
         float anchorX, anchorY;
