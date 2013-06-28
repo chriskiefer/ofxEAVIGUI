@@ -37,6 +37,7 @@ namespace EAVIGUI {
         setIsInteractive(false);
         backgroundColour = ofColor(0,0,0,0);
         touchedColour = backgroundColour;
+        justify = JUSTIFYLEFT;
     }
     
     void Label::fitToText() {
@@ -49,7 +50,16 @@ namespace EAVIGUI {
         ofSetColor(isTouched ? touchedColour : backgroundColour);
         ofRect(0,0, w, h);
         ofSetColor(colour);
-        font->drawString(text, 0, font->getLineHeight());
+        float textleft = 0;
+        switch (justify) {
+            case JUSTIFYRIGHT:
+                textleft = w - font->stringWidth(text);
+                break;
+            case JUSTIFYCENTER:
+                textleft = (w - font->stringWidth(text)) / 2.0;
+                break;
+        }
+        font->drawString(text, textleft, font->getLineHeight());
         
     }
 
@@ -87,6 +97,11 @@ namespace EAVIGUI {
         InterfaceObject::touchExit(touch);
         invalidate();
     }
+    
+    void Label::setTextJustification(textJustifyOptions newOption) {
+        justify = newOption;
+    }
+
 
 
 }

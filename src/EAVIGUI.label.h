@@ -37,6 +37,7 @@ namespace EAVIGUI {
 
     class Label : public InterfaceObject {
     public:
+        enum textJustifyOptions {JUSTIFYLEFT, JUSTIFYCENTER, JUSTIFYRIGHT};
         Label(InterfaceListener *_listener, int _id, int _x, int _y, int _w, int _h, ofTrueTypeFont *_font, string _text, ofColor _colour);
         void setText(string t);
         void fitToText();
@@ -46,11 +47,13 @@ namespace EAVIGUI {
         void touchDown(ofTouchEventArgs &touch);
         void touchUp(ofTouchEventArgs &touch);
         void touchExit(ofTouchEventArgs &touch);
+        void setTextJustification(textJustifyOptions newOption);
     protected:
         ofTrueTypeFont *font;
         ofColor colour, backgroundColour, touchedColour;
         void drawToBuffer();
         string text;
+        textJustifyOptions justify;
         
     };
 

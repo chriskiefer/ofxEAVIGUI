@@ -299,7 +299,6 @@ namespace EAVIGUI {
         //cancel all touches
         for (std::map<int,InterfaceObject*>::iterator it=touchedObjects.begin(); it!=touchedObjects.end(); ++it) {
             if (NULL != it->second) {
-//                it->second->touchExit();
                 it->second = NULL;
             }
         }

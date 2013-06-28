@@ -41,7 +41,7 @@ namespace EAVIGUI {
         setIsInteractive(false);
         setWidth(_w);
         setHeight(_h);
-        cornerRadius = 30;
+        cornerRadius = 50;
     }
     
     void Panel::setCornerRadius(float val) {
@@ -55,12 +55,13 @@ namespace EAVIGUI {
     }
     
     void Panel::drawToBuffer() {
+        ofEnableSmoothing();
         ofFill();
         ofSetColor(colour);
-        roundedRect(0,0, w-1, h-1, cornerRadius);
+        roundedRect(1,1, w-1, h-1, cornerRadius);
         ofNoFill();
         ofSetColor(borderColour);
-        roundedRect(0,0, w-1, h-1, cornerRadius);
+        roundedRect(1,1, w-1, h-1, cornerRadius);
     }
     
 }
