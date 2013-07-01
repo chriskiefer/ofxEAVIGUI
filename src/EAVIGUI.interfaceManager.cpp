@@ -42,7 +42,8 @@ namespace EAVIGUI {
     bool InterfaceManager::redirectMouseToTouch = false;
     InterfaceManager::rotationLockModes InterfaceManager::rotationLock = InterfaceManager::NOROTATIONLOCK;
     map<int, InterfaceObject*> InterfaceManager::touchedObjects;
-    
+    map<int, InterfaceObject*> InterfaceManager::externalTouches;
+
     InterfaceObject* InterfaceManager::addObject(InterfaceObject* obj) {
         intObjs.push_back(obj);
         return intObjs.back();
@@ -237,6 +238,15 @@ namespace EAVIGUI {
     }
 
 
+    InterfaceObject* InterfaceManager::queryTouchObjectMap(touchObjectMap& m, int key) {
+        InterfaceObject *res = NULL;
+        touchObjectMap::iterator it = m.find(key);
+        if (it != m.end()) {
+            res = it->second;
+        }
+        return res;
+    }
+
     void InterfaceManager::touchDown(ofTouchEventArgs &touch) {
         //cout << "Touch down " << touch.x << "," << touch.y << endl;
         InterfaceObject *obj = InterfaceManager::getTargetObject(touch);
@@ -249,38 +259,70 @@ namespace EAVIGUI {
     }
     
     void InterfaceManager::touchMoved(ofTouchEventArgs &touch) {
-//        cout << "Touch moved " << touch.id << endl;
-        InterfaceObject *obj = getTargetObject(touch);
-        //in an object?
-        if (NULL != obj) {
-//            cout << "Touch " << touch.id << " moved to " << obj->id << endl;
-            //has this touch just exited from another object?
-            if (touchedObjects[touch.id] != NULL && touchedObjects[touch.id] != obj) {
-                //cout << "Touch exit: " << touchingObject->id << endl;
-                touchedObjects[touch.id]->touchExit(touch);
-            }
-            touchedObjects[touch.id] = obj;
-            obj->touchMoved(touch);
+        //has an object kept this touch?
+        InterfaceObject* trackingObject = queryTouchObjectMap(externalTouches, touch.id);
+        if (trackingObject != NULL) {
+            //pipe the touch to this object
+            trackingObject->touchMovedExternal(touch);
         }else{
-            //not on an object
-//            cout << "Touch " << touch.id << " moved, no object found\n";
-            //trigger an exit if this touch was on an object and that object isn't still being touched
-            if (touchedObjects[touch.id] != NULL) {
-//                cout << "Touch exit to space: " << touchedObjects[touch.id]->id << endl;
-                touchedObjects[touch.id]->touchExit(touch);
-                touchedObjects[touch.id] = NULL;
+    //        cout << "Touch moved " << touch.id << endl;
+            InterfaceObject *obj = getTargetObject(touch);
+            //in an object?
+            if (NULL != obj) {
+    //            cout << "Touch " << touch.id << " moved to " << obj->id << endl;
+                //has this touch just exited from another object?
+                bool touchKept = false;
+                InterfaceObject* touchedObj = queryTouchObjectMap(touchedObjects, touch.id);
+                if (touchedObj != NULL && touchedObj != obj) {
+                    //cout << "Touch exit: " << touchingObject->id << endl;
+                    touchKept = touchExitWithKeepCheck(touch);
+    //                touchedObjects[touch.id]->touchExit(touch);
+                }
+                if (!touchKept) {
+                    touchedObjects[touch.id] = obj;
+                    obj->touchMoved(touch);
+                }
+            }else{
+                //not on an object
+    //            cout << "Touch " << touch.id << " moved, no object found\n";
+                //trigger an exit if this touch was on an object and that object isn't still being touched
+                if (queryTouchObjectMap(touchedObjects, touch.id) != NULL) {
+    //                cout << "Touch exit to space: " << touchedObjects[touch.id]->id << endl;
+    //                touchedObjects[touch.id]->touchExit(touch);
+                    touchExitWithKeepCheck(touch);
+                    touchedObjects[touch.id] = NULL;
+                }
             }
         }
     }
+    
+    bool InterfaceManager::touchExitWithKeepCheck(ofTouchEventArgs &touch) {
+        bool keepTouch = touchedObjects[touch.id]->keepThisTouch(touch);
+        if (keepTouch) {
+            externalTouches[touch.id] = touchedObjects[touch.id];
+        }else{
+            touchedObjects[touch.id]->touchExit(touch);
+        }
+        return keepTouch;
+    }
+
 
     void InterfaceManager::touchUp(ofTouchEventArgs &touch) {
 //        cout << "Touch up " << touch.x << "," << touch.y << endl;
-        InterfaceObject *obj = InterfaceManager::getTargetObject(touch);
-        if (NULL != obj) {
-//            cout << "touch up: " << obj->id << endl;
+        //has an object kept this touch?
+        InterfaceObject* trackingObject = queryTouchObjectMap(externalTouches, touch.id);
+        if (trackingObject != NULL) {
+            //pipe the event to this object
+            trackingObject->touchUpExternal(touch);
             touchedObjects[touch.id] = NULL;
-            obj->touchUp(touch);
-            touchedObjects[touch.id] = NULL;
+            externalTouches[touch.id] = NULL;
+        }else{
+            InterfaceObject *obj = InterfaceManager::getTargetObject(touch);
+            if (NULL != obj) {
+    //            cout << "touch up: " << obj->id << endl;
+                touchedObjects[touch.id] = NULL;
+                obj->touchUp(touch);
+            }
         }
     }
 

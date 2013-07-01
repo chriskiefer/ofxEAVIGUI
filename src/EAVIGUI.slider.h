@@ -45,13 +45,20 @@ namespace EAVIGUI {
         Slider(InterfaceListener *_listener, int _id, int _x, int _y, int _w, int _h, ofTrueTypeFont *_font, string _text, ofColor _textcolour, ofColor _backgroundColour, ofColor sliderColour);
         float getValue() {return value;}
         void setValue(float val);
+        bool keepThisTouch(ofTouchEventArgs &touch);
     protected:
         ofColor sliderColour;
         void drawToBuffer();
         float value;
         void touchDown(ofTouchEventArgs &touch);
         void touchMoved(ofTouchEventArgs &touch);
+        void touchUp(ofTouchEventArgs &touch);
+        void touchUpExternal(ofTouchEventArgs &touch);
+        void touchExit(ofTouchEventArgs &touch);
         void moveSlider(ofTouchEventArgs &touch);
+        int touchTarget;
+        
+
         
     };
     

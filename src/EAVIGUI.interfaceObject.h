@@ -30,6 +30,7 @@
 #include "ofMain.h"
 #include "TargetConditionals.h"
 #include <list>
+#include <map>
 
 namespace EAVIGUI {
 
@@ -60,7 +61,7 @@ namespace EAVIGUI {
     public:
 
         enum InterfaceManagerEvents {
-            TOUCHDOUBLETAP, TOUCHDOWN, TOUCHMOVED, TOUCHUP, TOUCHEXIT, MOUSEPRESSED, MOUSERELEASED, MOUSEDRAGGED, MOUSEMOVED
+            TOUCHDOUBLETAP, TOUCHDOWN, TOUCHMOVED, TOUCHMOVED_EXTERNAL, TOUCHUP, TOUCHEXIT, TOUCHUP_EXTERNAL, MOUSEPRESSED, MOUSERELEASED, MOUSEDRAGGED, MOUSEMOVED, TOUCHEXITFLICK
         };
         
         
@@ -80,9 +81,12 @@ namespace EAVIGUI {
         virtual void setEnabled(bool newEnabled);
         virtual void touchDown(ofTouchEventArgs &touch);
         virtual void touchUp(ofTouchEventArgs &touch);
+        virtual void touchUpExternal(ofTouchEventArgs &touch);
+        virtual void touchMovedExternal(ofTouchEventArgs &touch);
         virtual void touchDoubleTap(ofTouchEventArgs &touch);
         virtual void touchMoved(ofTouchEventArgs &touch);
         virtual void touchExit(ofTouchEventArgs &touch);
+        virtual bool keepThisTouch(ofTouchEventArgs &touch); //don't exit, continue piping this touch to the control when out of its bounds
         
         
         void addChild(InterfaceObject* child);
@@ -142,7 +146,8 @@ namespace EAVIGUI {
         void setRotation(float angle);
         float getRotation();
         void getTouchDownPoint(int &x, int &y);
-        void analyseExitGesture(bool &flick, float &angle);
+        
+        void enableExitFlickDetection(bool val);
     protected:
         InterfaceObject();
         void init(InterfaceListener *_listener, int _id, int _x, int _y);
@@ -155,6 +160,8 @@ namespace EAVIGUI {
         ofFbo *tex;
         bool invalidated;
         bool enabled;
+        bool exitFlickDetection;
+        void recordTouchMoved(ofTouchEventArgs &touch);
         
         vector<InterfaceObject*> children;
         bool visible;
@@ -162,13 +169,14 @@ namespace EAVIGUI {
         InterfaceObject* parent;
         bool interactive;
         int w, h, orgW, orgH, cx, cy, lx, ly, tx, ty, ex, ey;
-        float touchVelocity, touchAcceleration;
         float scale, totalScale, xScaleMod, yScaleMod;
         int fboWidth, fboHeight;
         float anchorX, anchorY;
         bool deviceScalingOn;
         void setDeviceScaling(bool val);
         screenRotations currentScreenOrientation;
+        std::map<int, vector<ofPoint> > touchHistory;
+        std::map<int, float> touchVelocity;
         
         std::vector<baseEffect* > effects;
         float rotation;

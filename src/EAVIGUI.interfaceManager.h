@@ -81,6 +81,7 @@ namespace EAVIGUI {
         static void touchUp(ofTouchEventArgs &touch);
         static void touchDoubleTap(ofTouchEventArgs &touch);
         static void touchCancelled(ofTouchEventArgs &touch);
+        static bool touchExitWithKeepCheck(ofTouchEventArgs &touch);
         
         static void showHideModalGroup(InterfaceObjectGroup *modalGroup, bool visible);
         static bool modalShowing() {return currentModalGroup != NULL;}
@@ -109,7 +110,10 @@ namespace EAVIGUI {
         static InterfaceObject* getTargetObject(ofTouchEventArgs &touch);
         static interfaceObjectVector currentModalGroup;
         static rotationLockModes rotationLock;
-        static map<int, InterfaceObject*> touchedObjects;
+        typedef map<int, InterfaceObject*> touchObjectMap;
+        static touchObjectMap touchedObjects;
+        static touchObjectMap externalTouches;
+        static InterfaceObject* queryTouchObjectMap(touchObjectMap& m, int key);
 
 
 

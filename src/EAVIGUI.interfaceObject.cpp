@@ -81,8 +81,8 @@ namespace EAVIGUI {
         anchorX = anchorY = 0;
         lx=ly=0;
         tx = ty = 0; //touchDown Point
-        touchVelocity = touchAcceleration = 0;
         ex = ey = 0;
+        exitFlickDetection = false;
     }
     
     InterfaceObject::~InterfaceObject() {
@@ -382,11 +382,12 @@ namespace EAVIGUI {
     
     void InterfaceObject::touchDown(ofTouchEventArgs &touch) {
         touches.push_back(touch.id);
+        touchHistory[touch.id].clear();
         isTouched = true;
         tx = touch.x;
         ty = touch.y;
-        touchVelocity = 0;
-        touchAcceleration = 0;        
+        touchHistory[touch.id].push_back(ofPoint(touch.x, touch.y));
+        touchVelocity[touch.id] = 0;
         sendTouchCallback(InterfaceObject::TOUCHDOWN, touch);
     }
     
@@ -395,20 +396,28 @@ namespace EAVIGUI {
     }
     
     void InterfaceObject::touchMoved(ofTouchEventArgs &touch) {
+        recordTouchMoved(touch);
+        sendTouchCallback(InterfaceObject::TOUCHMOVED, touch);
+    }
+    
+    void InterfaceObject::touchMovedExternal(ofTouchEventArgs &touch) {
+        recordTouchMoved(touch);
+        sendTouchCallback(InterfaceObject::TOUCHMOVED_EXTERNAL, touch);
+    }
+    
+    void InterfaceObject::recordTouchMoved(ofTouchEventArgs &touch) {
         if (touches.size() > 0) {
-            float newTouchVelocity = ofDist(lx, ly, touch.x, touch.y);
-            touchAcceleration = newTouchVelocity - touchVelocity;
-            touchVelocity = newTouchVelocity;
+            touchVelocity[touch.id] = ofDist(lx, ly, touch.x, touch.y);
         }else{
-            touchVelocity = 0;
-            touchAcceleration = 0;
+            touchVelocity[touch.id] = 0;
         }
         touches.remove(touch.id);
         touches.push_back(touch.id);
-        sendTouchCallback(InterfaceObject::TOUCHMOVED, touch);
+        touchHistory[touch.id].push_back(ofPoint(touch.x, touch.y));
         lx = touch.x;
         ly = touch.y;
     }
+
     
     void InterfaceObject::touchExit(ofTouchEventArgs &touch) {
         touches.remove(touch.id);
@@ -424,6 +433,39 @@ namespace EAVIGUI {
         sendTouchCallback(InterfaceObject::TOUCHUP, touch);
     }
     
+    void InterfaceObject::touchUpExternal(ofTouchEventArgs &touch) {
+        touches.remove(touch.id);
+        isTouched = touches.size() > 0;
+        sendTouchCallback(InterfaceObject::TOUCHUP_EXTERNAL, touch);
+        bool flick = false;
+//        float flickangle = 0;
+        float overallAvgVel=0, lateAvgVel=0;
+        if (touchHistory[touch.id].size() > 3) {
+            for(int i=1; i < touchHistory[touch.id].size(); i++) {
+                overallAvgVel += ofDist(touchHistory[touch.id][i-1].x, touchHistory[touch.id][i-1].y, touchHistory[touch.id][i].x, touchHistory[touch.id][i].x);
+            }
+            overallAvgVel /= touchHistory[touch.id].size();
+            int pt = touchHistory[touch.id].size() / 2;
+            for(int i=pt; i < touchHistory[touch.id].size(); i++) {
+                lateAvgVel += ofDist(touchHistory[touch.id][i-1].x, touchHistory[touch.id][i-1].y, touchHistory[touch.id][i].x, touchHistory[touch.id][i].x);
+            }
+            lateAvgVel /= pt;
+            float velRatio = lateAvgVel / overallAvgVel;
+            cout << "Avg: " << overallAvgVel << ", " << lateAvgVel << ", " << velRatio << endl;
+            flick = velRatio > 1.4;
+        }
+        if (flick) {
+            sendCallback(TOUCHEXITFLICK);
+        }else{
+            sendCallback(TOUCHEXIT);
+        }
+        //        cout << touchVelocity << ", " << touchAcceleration <<  endl;
+        //        if (touchVelocity > min(getScaledWidth(), getScaledHeight()) / 5.0 ) {
+        //            flick = true;
+        //            angle = geom::angleBetween2(ex, ey, tx, ty);
+        //        }
+    }
+
     
     
     
@@ -767,15 +809,17 @@ namespace EAVIGUI {
         _y = ty;
     }
 
-    void InterfaceObject::analyseExitGesture(bool &flick, float &angle) {
-        flick = false;
-        angle = 0;
-        cout << touchVelocity << ", " << touchAcceleration <<  endl;
-        if (touchVelocity > min(getScaledWidth(), getScaledHeight()) / 4.0 ) {
-            flick = true;
-            angle = geom::angleBetween2(ex, ey, tx, ty);
-        }
+    
+    bool InterfaceObject::keepThisTouch(ofTouchEventArgs &touch) {
+        //could this be the start of a flick?
+        return exitFlickDetection && touchVelocity[touch.id] > min(getScaledWidth(), getScaledHeight()) / 5.0;
     }
+    
+    void InterfaceObject::enableExitFlickDetection(bool val) {
+        exitFlickDetection = val;
+    }
+    
+    
     //from http://forum.openframeworks.cc/index.php?topic=4448.0
     void quadraticBezierVertex(float cpx, float cpy, float x, float y, float prevX, float prevY) {
         float cp1x = prevX + 2.0/3.0*(cpx - prevX);

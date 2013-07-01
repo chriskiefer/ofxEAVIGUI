@@ -16,6 +16,7 @@ namespace EAVIGUI {
         sliderColour = _sliderColour;
         value = 0;
         setIsInteractive(true);
+        touchTarget = -1;
     }
     
     void Slider::drawToBuffer() {
@@ -30,12 +31,15 @@ namespace EAVIGUI {
 
     void Slider::touchDown(ofTouchEventArgs &touch) {
         Label::touchDown(touch);
+        touchTarget = touch.id;
         moveSlider(touch);
     }
     
     void Slider::touchMoved(ofTouchEventArgs &touch) {
-        Label::touchMoved(touch);
-        moveSlider(touch);
+        if (touch.id == touchTarget) {
+            Label::touchMoved(touch);
+            moveSlider(touch);
+        }
     }
   
     void Slider::moveSlider(ofTouchEventArgs &touch) {
@@ -44,9 +48,29 @@ namespace EAVIGUI {
         invalidate();
     }
     
+    void Slider::touchUp(ofTouchEventArgs &touch) {
+        Label::touchUp(touch);
+        touchTarget = -1;
+    }
+    
+    void Slider::touchUpExternal(ofTouchEventArgs &touch) {
+        Label::touchUpExternal(touch);
+        touchTarget = -1;
+    }
+    
+    void Slider::touchExit(ofTouchEventArgs &touch) {
+        Label::touchExit(touch);
+        touchTarget = -1;
+    }
+
+    
     void Slider::setValue(float val) {
         value = val;
         invalidate();
+    }
+
+    bool Slider::keepThisTouch(ofTouchEventArgs &touch) {
+        return exitFlickDetection; //don't check vel, as slider is probably quite thin in one dimension, making measurement difficult
     }
 
 
