@@ -52,5 +52,15 @@ namespace EAVIGUI {
         invalidate();
     }
 
+    void XYPad::setXValue(float val) {
+        xValue = val;
+        invalidate();
+    }
+    
+    void XYPad::setYValue(float val) {
+        yValue = val;
+        invalidate();
+    }
+
 
 };

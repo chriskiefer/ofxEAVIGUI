@@ -31,6 +31,8 @@ namespace EAVIGUI {
         inline float getYValue() {
             return yValue;
         }
+        void setXValue(float val);
+        void setYValue(float val);
     protected:
         float xValue, yValue;
         ofColor markerColour;
