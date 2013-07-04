@@ -220,7 +220,7 @@ namespace EAVIGUI {
         while(i--) {
             ofRectangle rotatedRect = liveObjectList->at(i)->getRectWithScreenRotation();
             if (liveObjectList->at(i)->isInteractive() && liveObjectList->at(i)->isVisible() &&
-                geom::pointInRect(touch.x,touch.y,rotatedRect.x, rotatedRect.y, rotatedRect.width, rotatedRect.height))
+                geom::pointInRect(touch.x,touch.y,rotatedRect.x, rotatedRect.y, rotatedRect.width-1, rotatedRect.height-1))
             {
 //                cout << touch.x << ", " << touch.y << ", " << rotatedRect.x << ", " << rotatedRect.y << ", " <<  rotatedRect.width << ", " << rotatedRect.height << endl;
                 //convert from screen coordinate system to object coordinate system

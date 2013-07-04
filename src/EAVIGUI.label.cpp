@@ -37,7 +37,9 @@ namespace EAVIGUI {
         setIsInteractive(false);
         backgroundColour = ofColor(0,0,0,0);
         touchedColour = backgroundColour;
-        justify = JUSTIFYLEFT;
+        hjustify = JUSTIFYLEFT;
+        vjustify = JUSTIFYTOP;
+        roundedCorners = false;
     }
     
     void Label::fitToText() {
@@ -48,18 +50,36 @@ namespace EAVIGUI {
     void Label::drawToBuffer() {
         ofFill();
         ofSetColor(isTouched ? touchedColour : backgroundColour);
-        ofRect(0,0, w, h);
+        if (roundedCorners) {
+            roundedRect(0, 0, w, h, 10);
+        }else{
+            ofRect(0,0, w, h);
+        }
         ofSetColor(colour);
         float textleft = 0;
-        switch (justify) {
+        switch (hjustify) {
             case JUSTIFYRIGHT:
                 textleft = w - font->stringWidth(text);
                 break;
             case JUSTIFYCENTER:
                 textleft = (w - font->stringWidth(text)) / 2.0;
                 break;
+            case JUSTIFYLEFT:
+                break;
         }
-        font->drawString(text, textleft, font->getLineHeight());
+        float textTop = font->getLineHeight();
+        switch (vjustify) {
+            case JUSTIFYCENTERV:
+                textTop = cy + (font->getLineHeight() / 2.0);
+                break;
+            case JUSTIFYBOTTOM:
+                textTop = h - font->getLineHeight();
+                break;
+            default:
+                break;
+        }
+
+        font->drawString(text, textleft, textTop);
         
     }
 
@@ -98,10 +118,20 @@ namespace EAVIGUI {
         invalidate();
     }
     
-    void Label::setTextJustification(textJustifyOptions newOption) {
-        justify = newOption;
+    void Label::setHorizontalTextJustification(textHorizontalJustifyOptions newOption) {
+        hjustify = newOption;
+        invalidate();
     }
 
+    void Label::setVerticalTextJustification(textVerticalJustifyOptions newOption) {
+        vjustify = newOption;
+        invalidate();
+    }
+
+    void Label::setRoundedCorners(bool val) {
+        roundedCorners = val;
+        invalidate();
+    }
 
 
 }

@@ -28,7 +28,7 @@ namespace EAVIGUI {
     protected:
         ofColor colour, borderColour;
         int checkBoxSize;
-        int gap;
+        int gap, leftOffset;
         bool checked;
         
     };

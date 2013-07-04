@@ -17,6 +17,7 @@ namespace EAVIGUI {
         gap = (mindim - checkBoxSize) / 2.0;
         setIsInteractive(true);
         checked = false;
+        leftOffset = -5;
     }
 
     void CheckBox::fitToText() {
@@ -28,10 +29,14 @@ namespace EAVIGUI {
         Label::drawToBuffer();
         ofFill();
         ofSetColor(255, 255, 255, 255);
-        ofRect(w - checkBoxSize - gap, gap, checkBoxSize, checkBoxSize);
+        ofRect(w - checkBoxSize - gap + leftOffset, gap, checkBoxSize, checkBoxSize);
+        ofNoFill();
+        ofSetColor(0);
+        ofRect(w - checkBoxSize - gap + leftOffset, gap, checkBoxSize, checkBoxSize);
         if (checked) {
+            ofFill();
             ofSetColor(100, 100, 100, 255);
-            ofRect(w - checkBoxSize - gap + 2, gap + 2, checkBoxSize - 4, checkBoxSize - 4);
+            ofRect(w - checkBoxSize - gap + leftOffset + 2, gap + 2, checkBoxSize - 4, checkBoxSize - 4);
         }
         
     }
