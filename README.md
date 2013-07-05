@@ -21,9 +21,11 @@ In brief, this is an example of some code for iOS
 
  --- in app.h
 
+```c++
+//add the listener to your app class
 class GUIApp : public ofxiPhoneApp, public EAVIGUI::InterfaceListener {
 
-...
+```
 
  --- in app.mm
 
