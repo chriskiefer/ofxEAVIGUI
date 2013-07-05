@@ -27,18 +27,18 @@ class GUIApp : public ofxiPhoneApp, public EAVIGUI::InterfaceListener {
 
  --- in app.mm
 
+```c++
+
 enum guiIDS {BUTTON1};
 
 void setup() {
 
-...
     button = new EAVIGUI::ImageButton(callback, BUTTON1, 0, 0, "button.png", "buttonOver.png"); //initialise a button
     button->setRelativePositioning(0.5, -button->getScaledWidth()/2.0, 0.5, -button->getScaledHeight()/2.0); //relative position, for screen rotations
     EAVIGUI::InterfaceManager::addObject(button); //add to gui
     button->setVisible(true);
 
     EAVIGUI::InterfaceManager::setup();
-...
 
 }
 
@@ -57,3 +57,4 @@ void handleInterfaceEvent(int intid, int eventTypeId, EAVIGUI::InterfaceObject *
         }
     }
 }
+```
