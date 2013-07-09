@@ -25,6 +25,7 @@
  */
 
 #include "EAVIGUI.label.h"
+#include <algorithm>
 
 namespace EAVIGUI {
 
@@ -71,9 +72,11 @@ namespace EAVIGUI {
                 break;
         }
         float textTop = font->getLineHeight();
+        int lines = 0;
         switch (vjustify) {
             case JUSTIFYCENTERV:
-                textTop = cy + (font->getLineHeight() / 2.0);
+                lines += std::count(text.begin(), text.end(), '\n');
+                textTop = cy + (font->getLineHeight() / 2.0) - (font->getLineHeight() * lines / 2.0);
                 break;
             case JUSTIFYBOTTOM:
                 textTop = h - font->getLineHeight();
@@ -81,7 +84,8 @@ namespace EAVIGUI {
             default:
                 break;
         }
-
+//        ofDisableAlphaBlending();
+        ofEnableAlphaBlending();
         font->drawString(text, textleft, textTop);
         
     }

@@ -369,6 +369,8 @@ namespace EAVIGUI {
     void InterfaceManager::addFont(string identifier, string fontname, int size) {
         InterfaceManager::fontList[identifier] = ofTrueTypeFont();
         InterfaceManager::fontList[identifier].loadFont(fontname, size);
+        InterfaceManager::fontList[identifier].setLineHeight(size + 4);
+        InterfaceManager::fontList[identifier].setLetterSpacing(1.037);
     }
     
     
