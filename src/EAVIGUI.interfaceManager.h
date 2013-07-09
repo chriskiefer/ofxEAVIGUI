@@ -101,6 +101,8 @@ namespace EAVIGUI {
         static void setRotationLock(rotationLockModes newlock);
         static rotationLockModes getRotationLock();
         static void setScreenRotations(screenRotations newMode);
+        
+        static int touchedObjectCount();
 
     private:
         static InterfaceObjectGroup intObjs;

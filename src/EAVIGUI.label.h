@@ -51,6 +51,8 @@ namespace EAVIGUI {
         void setHorizontalTextJustification(textHorizontalJustifyOptions newOption);
         void setVerticalTextJustification(textVerticalJustifyOptions newOption);
         void setRoundedCorners(bool val);
+        void setLeftMargin(int m);
+        void setRightMargin(int m);
     protected:
         ofTrueTypeFont *font;
         ofColor colour, backgroundColour, touchedColour;
@@ -59,6 +61,7 @@ namespace EAVIGUI {
         textHorizontalJustifyOptions hjustify;
         textVerticalJustifyOptions vjustify;
         bool roundedCorners;
+        int leftMargin, rightMargin;
         
     };
 

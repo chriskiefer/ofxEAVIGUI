@@ -40,6 +40,7 @@ namespace EAVIGUI {
         hjustify = JUSTIFYLEFT;
         vjustify = JUSTIFYTOP;
         roundedCorners = false;
+        leftMargin = rightMargin = 0;
     }
     
     void Label::fitToText() {
@@ -60,11 +61,13 @@ namespace EAVIGUI {
         switch (hjustify) {
             case JUSTIFYRIGHT:
                 textleft = w - font->stringWidth(text);
+                textleft -= rightMargin;
                 break;
             case JUSTIFYCENTER:
                 textleft = (w - font->stringWidth(text)) / 2.0;
                 break;
             case JUSTIFYLEFT:
+                textleft += leftMargin;
                 break;
         }
         float textTop = font->getLineHeight();
@@ -130,6 +133,16 @@ namespace EAVIGUI {
 
     void Label::setRoundedCorners(bool val) {
         roundedCorners = val;
+        invalidate();
+    }
+
+    void Label::setLeftMargin(int m) {
+        leftMargin = m;
+        invalidate();
+    }
+    
+    void Label::setRightMargin(int m) {
+        rightMargin = m;
         invalidate();
     }
 

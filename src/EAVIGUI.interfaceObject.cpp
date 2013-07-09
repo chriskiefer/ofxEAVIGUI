@@ -818,8 +818,7 @@ namespace EAVIGUI {
     void InterfaceObject::enableExitFlickDetection(bool val) {
         exitFlickDetection = val;
     }
-    
-    
+      
     //from http://forum.openframeworks.cc/index.php?topic=4448.0
     void quadraticBezierVertex(float cpx, float cpy, float x, float y, float prevX, float prevY) {
         float cp1x = prevX + 2.0/3.0*(cpx - prevX);

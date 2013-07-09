@@ -411,6 +411,17 @@ namespace EAVIGUI {
             intObjs[i]->invalidate();
         }
     }
+    
+    int InterfaceManager::touchedObjectCount() {
+        int count = 0;
+        for(touchObjectMap::iterator i=touchedObjects.begin(); i != touchedObjects.end(); ++i) {
+            if (i->second != NULL) {
+                count++;
+            }
+        }
+        return count;
+    }
+
 
     
     void InterfaceManager::exit() {
