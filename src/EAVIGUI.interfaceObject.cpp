@@ -83,6 +83,7 @@ namespace EAVIGUI {
         tx = ty = 0; //touchDown Point
         ex = ey = 0;
         exitFlickDetection = false;
+        exitGestureStartIdx = 0;
     }
     
     InterfaceObject::~InterfaceObject() {
@@ -440,18 +441,24 @@ namespace EAVIGUI {
         bool flick = false;
 //        float flickangle = 0;
         float overallAvgVel=0, lateAvgVel=0;
-        if (touchHistory[touch.id].size() > 3) {
-            for(int i=1; i < touchHistory[touch.id].size(); i++) {
-                overallAvgVel += ofDist(touchHistory[touch.id][i-1].x, touchHistory[touch.id][i-1].y, touchHistory[touch.id][i].x, touchHistory[touch.id][i].x);
+        if (touchHistory[touch.id].size() - exitGestureStartIdx > 3) {
+            for(int i=exitGestureStartIdx+1; i < touchHistory[touch.id].size(); i++) {
+                float vel = ofDist(touchHistory[touch.id][i-1].x, touchHistory[touch.id][i-1].y, touchHistory[touch.id][i].x, touchHistory[touch.id][i].x);
+                overallAvgVel += vel;
+                cout << vel << ", ";
             }
             overallAvgVel /= touchHistory[touch.id].size();
-            int pt = touchHistory[touch.id].size() / 2;
+            int pt = (touchHistory[touch.id].size() - exitGestureStartIdx) / 2;
             for(int i=pt; i < touchHistory[touch.id].size(); i++) {
                 lateAvgVel += ofDist(touchHistory[touch.id][i-1].x, touchHistory[touch.id][i-1].y, touchHistory[touch.id][i].x, touchHistory[touch.id][i].x);
             }
             lateAvgVel /= pt;
             float velRatio = lateAvgVel / overallAvgVel;
-            cout << "Avg: " << overallAvgVel << ", " << lateAvgVel << ", " << velRatio << endl;
+            cout << endl << "Avg: " << overallAvgVel << ", " << lateAvgVel << ", " << velRatio << endl;
+//            for(int i=0; i < touchHistory[touch.id].size(); i++) {
+//                cout << touchHistory[touch.id].at(i) << " -- ";
+//            }
+            cout << endl;
             flick = velRatio > 1.4;
         }
         if (flick) {
@@ -459,11 +466,7 @@ namespace EAVIGUI {
         }else{
             sendCallback(TOUCHEXIT);
         }
-        //        cout << touchVelocity << ", " << touchAcceleration <<  endl;
-        //        if (touchVelocity > min(getScaledWidth(), getScaledHeight()) / 5.0 ) {
-        //            flick = true;
-        //            angle = geom::angleBetween2(ex, ey, tx, ty);
-        //        }
+        
     }
 
     
@@ -818,6 +821,11 @@ namespace EAVIGUI {
     void InterfaceObject::enableExitFlickDetection(bool val) {
         exitFlickDetection = val;
     }
+    
+    void InterfaceObject::touchMovingToExternal(ofTouchEventArgs &touch) {
+        exitGestureStartIdx = MAX(0, touchHistory[touch.id].size() - 5);
+    }
+
     
     
     //from http://forum.openframeworks.cc/index.php?topic=4448.0

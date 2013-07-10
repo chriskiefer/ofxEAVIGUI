@@ -300,6 +300,7 @@ namespace EAVIGUI {
         bool keepTouch = touchedObjects[touch.id]->keepThisTouch(touch);
         if (keepTouch) {
             externalTouches[touch.id] = touchedObjects[touch.id];
+            touchedObjects[touch.id]->touchMovingToExternal(touch);
         }else{
             touchedObjects[touch.id]->touchExit(touch);
         }

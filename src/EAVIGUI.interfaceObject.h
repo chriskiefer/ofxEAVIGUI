@@ -148,6 +148,7 @@ namespace EAVIGUI {
         void getTouchDownPoint(int &x, int &y);
         
         void enableExitFlickDetection(bool val);
+        virtual void touchMovingToExternal(ofTouchEventArgs &touch);
     protected:
         InterfaceObject();
         void init(InterfaceListener *_listener, int _id, int _x, int _y);
@@ -187,6 +188,7 @@ namespace EAVIGUI {
         
         list<int> touches;
         bool isTouched;
+        int exitGestureStartIdx;
     private:
         void show();
         void hide();
