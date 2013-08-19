@@ -19,6 +19,7 @@ namespace EAVIGUI {
         setIsInteractive(true);
         xValue = 0.5;
         yValue = 0.5;
+        markerDiameter = min(w,h) * 0.2;
     }
 
     
@@ -30,7 +31,7 @@ namespace EAVIGUI {
         ofNoFill();
         float xpos = xValue * w;
         float ypos = yValue * h;
-        ofCircle(xpos, ypos, 40);
+        ofCircle(xpos, ypos, markerDiameter);
         ofSetColor(230,230,230,100);
         ofLine(xpos, 0, xpos, h);
         ofLine(0,ypos, w, ypos);

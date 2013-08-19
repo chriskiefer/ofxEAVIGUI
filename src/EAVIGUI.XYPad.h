@@ -41,6 +41,7 @@ namespace EAVIGUI {
         void touchDown(ofTouchEventArgs &touch);
         void touchMoved(ofTouchEventArgs &touch);
         void moveMarker(ofTouchEventArgs &touch);
+        float markerDiameter;
 
         
     };

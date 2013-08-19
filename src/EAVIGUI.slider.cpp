@@ -30,9 +30,9 @@ namespace EAVIGUI {
     }
 
     void Slider::touchDown(ofTouchEventArgs &touch) {
-        Label::touchDown(touch);
         touchTarget = touch.id;
         moveSlider(touch);
+        Label::touchDown(touch);
     }
     
     void Slider::touchMoved(ofTouchEventArgs &touch) {

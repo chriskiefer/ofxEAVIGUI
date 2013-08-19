@@ -79,6 +79,7 @@ namespace EAVIGUI {
         virtual void mouseReleased(int x, int y, int button );
         virtual void mouseDragged(int x, int y, int button);
         virtual void setEnabled(bool newEnabled);
+        virtual bool isEnabled();
         virtual void touchDown(ofTouchEventArgs &touch);
         virtual void touchUp(ofTouchEventArgs &touch);
         virtual void touchUpExternal(ofTouchEventArgs &touch);
@@ -148,6 +149,7 @@ namespace EAVIGUI {
         void getTouchDownPoint(int &x, int &y);
         
         void enableExitFlickDetection(bool val);
+        void enableExternalTouchUp(bool val);
         virtual void touchMovingToExternal(ofTouchEventArgs &touch);
     protected:
         InterfaceObject();
@@ -162,6 +164,7 @@ namespace EAVIGUI {
         bool invalidated;
         bool enabled;
         bool exitFlickDetection;
+        bool externalTouchUp;
         void recordTouchMoved(ofTouchEventArgs &touch);
         
         vector<InterfaceObject*> children;
@@ -189,6 +192,7 @@ namespace EAVIGUI {
         list<int> touches;
         bool isTouched;
         int exitGestureStartIdx;
+
     private:
         void show();
         void hide();

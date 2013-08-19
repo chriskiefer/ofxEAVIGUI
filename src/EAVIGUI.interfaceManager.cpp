@@ -1,4 +1,3 @@
-
 /*
  *  EAVIGUI
  *  Copyright 2010 Chris Kiefer. All rights reserved.
@@ -219,7 +218,7 @@ namespace EAVIGUI {
         int i = liveObjectList->size();
         while(i--) {
             ofRectangle rotatedRect = liveObjectList->at(i)->getRectWithScreenRotation();
-            if (liveObjectList->at(i)->isInteractive() && liveObjectList->at(i)->isVisible() &&
+            if (liveObjectList->at(i)->isEnabled() && liveObjectList->at(i)->isInteractive() && liveObjectList->at(i)->isVisible() &&
                 geom::pointInRect(touch.x,touch.y,rotatedRect.x, rotatedRect.y, rotatedRect.width-1, rotatedRect.height-1))
             {
 //                cout << touch.x << ", " << touch.y << ", " << rotatedRect.x << ", " << rotatedRect.y << ", " <<  rotatedRect.width << ", " << rotatedRect.height << endl;
@@ -261,10 +260,20 @@ namespace EAVIGUI {
     void InterfaceManager::touchMoved(ofTouchEventArgs &touch) {
         //has an object kept this touch?
         InterfaceObject* trackingObject = queryTouchObjectMap(externalTouches, touch.id);
+        //if tracking object, and touch hasn't moved back into tracking object
+        bool internalTouchMoved = true;
         if (trackingObject != NULL) {
-            //pipe the touch to this object
-            trackingObject->touchMovedExternal(touch);
-        }else{
+            bool movedBackIntoObject = getTargetObject(touch) == trackingObject;
+            if (movedBackIntoObject) {
+                cout << "mb\n";
+                externalTouches[touch.id] = NULL;
+            }else{
+                //pipe the touch to this object
+                internalTouchMoved = false;
+                trackingObject->touchMovedExternal(touch);
+            }
+        }
+        if (internalTouchMoved) {
     //        cout << "Touch moved " << touch.id << endl;
             InterfaceObject *obj = getTargetObject(touch);
             //in an object?

@@ -84,6 +84,7 @@ namespace EAVIGUI {
         ex = ey = 0;
         exitFlickDetection = false;
         exitGestureStartIdx = 0;
+        externalTouchUp = false;
     }
     
     InterfaceObject::~InterfaceObject() {
@@ -169,6 +170,11 @@ namespace EAVIGUI {
                 for(int e=0; e < effects.size(); e++) {
                     effects.at(e)->draw();
                     effects.at(e)->validate();
+                }
+                if (!enabled) {
+                    ofSetColor(150, 150, 150, 200);
+                    ofFill();
+                    ofRect(0,0,w,h);
                 }
                 tex->end();
                 postDrawToBuffer();
@@ -437,36 +443,38 @@ namespace EAVIGUI {
     void InterfaceObject::touchUpExternal(ofTouchEventArgs &touch) {
         touches.remove(touch.id);
         isTouched = touches.size() > 0;
-        sendTouchCallback(InterfaceObject::TOUCHUP_EXTERNAL, touch);
-        bool flick = false;
-//        float flickangle = 0;
-        float overallAvgVel=0, lateAvgVel=0;
-        if (touchHistory[touch.id].size() - exitGestureStartIdx > 3) {
-            for(int i=exitGestureStartIdx+1; i < touchHistory[touch.id].size(); i++) {
-                float vel = ofDist(touchHistory[touch.id][i-1].x, touchHistory[touch.id][i-1].y, touchHistory[touch.id][i].x, touchHistory[touch.id][i].x);
-                overallAvgVel += vel;
-                cout << vel << ", ";
+        if (exitFlickDetection) {
+            bool flick = false;
+    //        float flickangle = 0;
+            float overallAvgVel=0, lateAvgVel=0;
+            if (touchHistory[touch.id].size() - exitGestureStartIdx > 3) {
+                for(int i=exitGestureStartIdx+1; i < touchHistory[touch.id].size(); i++) {
+                    float vel = ofDist(touchHistory[touch.id][i-1].x, touchHistory[touch.id][i-1].y, touchHistory[touch.id][i].x, touchHistory[touch.id][i].x);
+                    overallAvgVel += vel;
+                    cout << vel << ", ";
+                }
+                overallAvgVel /= touchHistory[touch.id].size();
+                int pt = (touchHistory[touch.id].size() - exitGestureStartIdx) / 2;
+                for(int i=pt; i < touchHistory[touch.id].size(); i++) {
+                    lateAvgVel += ofDist(touchHistory[touch.id][i-1].x, touchHistory[touch.id][i-1].y, touchHistory[touch.id][i].x, touchHistory[touch.id][i].x);
+                }
+                lateAvgVel /= pt;
+                float velRatio = overallAvgVel > 0 ? lateAvgVel / overallAvgVel : 0;
+                cout << endl << "Avg: " << overallAvgVel << ", " << lateAvgVel << ", " << velRatio << endl;
+    //            for(int i=0; i < touchHistory[touch.id].size(); i++) {
+    //                cout << touchHistory[touch.id].at(i) << " -- ";
+    //            }
+                cout << endl;
+                flick = velRatio > 1.4;
             }
-            overallAvgVel /= touchHistory[touch.id].size();
-            int pt = (touchHistory[touch.id].size() - exitGestureStartIdx) / 2;
-            for(int i=pt; i < touchHistory[touch.id].size(); i++) {
-                lateAvgVel += ofDist(touchHistory[touch.id][i-1].x, touchHistory[touch.id][i-1].y, touchHistory[touch.id][i].x, touchHistory[touch.id][i].x);
+            if (flick) {
+                sendCallback(TOUCHEXITFLICK);
+            }else{
+                sendCallback(TOUCHEXIT);
             }
-            lateAvgVel /= pt;
-            float velRatio = lateAvgVel / overallAvgVel;
-            cout << endl << "Avg: " << overallAvgVel << ", " << lateAvgVel << ", " << velRatio << endl;
-//            for(int i=0; i < touchHistory[touch.id].size(); i++) {
-//                cout << touchHistory[touch.id].at(i) << " -- ";
-//            }
-            cout << endl;
-            flick = velRatio > 1.4;
-        }
-        if (flick) {
-            sendCallback(TOUCHEXITFLICK);
         }else{
-            sendCallback(TOUCHEXIT);
+            sendTouchCallback(InterfaceObject::TOUCHUP_EXTERNAL, touch);            
         }
-        
     }
 
     
@@ -814,17 +822,27 @@ namespace EAVIGUI {
 
     
     bool InterfaceObject::keepThisTouch(ofTouchEventArgs &touch) {
-        //could this be the start of a flick?
-        return exitFlickDetection && touchVelocity[touch.id] > min(getScaledWidth(), getScaledHeight()) / 5.0;
+        //could this be the start of a flick? or are we monitoring for external touch up
+        return externalTouchUp || (exitFlickDetection && touchVelocity[touch.id] > min(getScaledWidth(), getScaledHeight()) / 5.0);
     }
     
     void InterfaceObject::enableExitFlickDetection(bool val) {
         exitFlickDetection = val;
     }
     
+    void InterfaceObject::enableExternalTouchUp(bool val) {
+        externalTouchUp = val;
+    }
+
+    
     void InterfaceObject::touchMovingToExternal(ofTouchEventArgs &touch) {
         exitGestureStartIdx = MAX(0, touchHistory[touch.id].size() - 5);
     }
+    
+    bool InterfaceObject::isEnabled() {
+        return enabled;
+    }
+
 
     
     
