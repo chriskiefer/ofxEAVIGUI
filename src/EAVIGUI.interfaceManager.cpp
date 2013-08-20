@@ -253,7 +253,6 @@ namespace EAVIGUI {
             //if we catch the second tap of a double tap, it reports strange coordinates
             doubleTapFlag = false;
         else {
-            cout << "Touch down " << touch.x << "," << touch.y << endl;
             InterfaceObject *obj = InterfaceManager::getTargetObject(touch);
             if (NULL != obj) {
     //            cout << "touch down: " << obj->id << endl;
