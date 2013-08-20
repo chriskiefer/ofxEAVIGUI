@@ -380,7 +380,9 @@ namespace EAVIGUI {
 
     void InterfaceManager::update() {
         for (int i=0; i < intObjs.size(); i++) {
-            intObjs[i]->update();
+            if (intObjs[i]->isVisible()) {
+                intObjs[i]->update();
+            }
         }
     }
 
