@@ -42,7 +42,9 @@ namespace EAVIGUI {
     InterfaceManager::rotationLockModes InterfaceManager::rotationLock = InterfaceManager::NOROTATIONLOCK;
     map<int, InterfaceObject*> InterfaceManager::touchedObjects;
     map<int, InterfaceObject*> InterfaceManager::externalTouches;
-
+    bool InterfaceManager::doubleTapFlag = false;
+    bool InterfaceManager::doubleTapEnabled = true;
+    
     InterfaceObject* InterfaceManager::addObject(InterfaceObject* obj) {
         intObjs.push_back(obj);
         return intObjs.back();
@@ -247,14 +249,18 @@ namespace EAVIGUI {
     }
 
     void InterfaceManager::touchDown(ofTouchEventArgs &touch) {
-        //cout << "Touch down " << touch.x << "," << touch.y << endl;
-        InterfaceObject *obj = InterfaceManager::getTargetObject(touch);
-        if (NULL != obj) {
-//            cout << "touch down: " << obj->id << endl;
-            touchedObjects[touch.id] = obj;
-            obj->touchDown(touch);
+        if (doubleTapFlag)
+            //if we catch the second tap of a double tap, it reports strange coordinates
+            doubleTapFlag = false;
+        else {
+            cout << "Touch down " << touch.x << "," << touch.y << endl;
+            InterfaceObject *obj = InterfaceManager::getTargetObject(touch);
+            if (NULL != obj) {
+    //            cout << "touch down: " << obj->id << endl;
+                touchedObjects[touch.id] = obj;
+                obj->touchDown(touch);
+            }
         }
-        
     }
     
     void InterfaceManager::touchMoved(ofTouchEventArgs &touch) {
@@ -337,10 +343,17 @@ namespace EAVIGUI {
     }
 
     void InterfaceManager::touchDoubleTap(ofTouchEventArgs &touch) {
-        InterfaceObject *obj = InterfaceManager::getTargetObject(touch);
-        if (NULL != obj) {
-            obj->touchDoubleTap(touch);
+        if (doubleTapEnabled) {
+            InterfaceObject *obj = InterfaceManager::getTargetObject(touch);
+            if (NULL != obj) {
+                obj->touchDoubleTap(touch);
+            }
+            doubleTapFlag = true;
         }
+    }
+
+    void InterfaceManager::enableDoubleTap(bool val) {
+        doubleTapEnabled = val;
     }
 
     void InterfaceManager::touchCancelled(ofTouchEventArgs &touch) {

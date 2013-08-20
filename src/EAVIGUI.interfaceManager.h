@@ -101,6 +101,7 @@ namespace EAVIGUI {
         static void setRotationLock(rotationLockModes newlock);
         static rotationLockModes getRotationLock();
         static void setScreenRotations(screenRotations newMode);
+        static void enableDoubleTap(bool val);
 
     private:
         static InterfaceObjectGroup intObjs;
@@ -114,6 +115,8 @@ namespace EAVIGUI {
         static touchObjectMap touchedObjects;
         static touchObjectMap externalTouches;
         static InterfaceObject* queryTouchObjectMap(touchObjectMap& m, int key);
+        static bool doubleTapFlag;
+        static bool doubleTapEnabled;
 
 
 
