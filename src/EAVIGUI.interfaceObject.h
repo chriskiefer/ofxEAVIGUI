@@ -61,7 +61,7 @@ namespace EAVIGUI {
     public:
 
         enum InterfaceManagerEvents {
-            TOUCHDOUBLETAP, TOUCHDOWN, TOUCHMOVED, TOUCHMOVED_EXTERNAL, TOUCHUP, TOUCHEXIT, TOUCHUP_EXTERNAL, MOUSEPRESSED, MOUSERELEASED, MOUSEDRAGGED, MOUSEMOVED, TOUCHEXITFLICK
+            TOUCHDOUBLETAP, TOUCHDOWN, TOUCHMOVED, TOUCHMOVED_EXTERNAL, TOUCHUP, TOUCHCANCELLED, TOUCHEXIT, TOUCHUP_EXTERNAL, MOUSEPRESSED, MOUSERELEASED, MOUSEDRAGGED, MOUSEMOVED, TOUCHEXITFLICK
         };
         
         
@@ -87,6 +87,7 @@ namespace EAVIGUI {
         virtual void touchDoubleTap(ofTouchEventArgs &touch);
         virtual void touchMoved(ofTouchEventArgs &touch);
         virtual void touchExit(ofTouchEventArgs &touch);
+        virtual void touchCancelled(ofTouchEventArgs &touch);
         virtual bool keepThisTouch(ofTouchEventArgs &touch); //don't exit, continue piping this touch to the control when out of its bounds
         
         

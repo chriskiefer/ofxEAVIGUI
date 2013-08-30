@@ -42,10 +42,12 @@ namespace EAVIGUI {
     class Slider : public Label {
     public:
         enum sliderEvents {SLIDERMOVED};
+        enum sliderTypes {BASIC, BAR};
         Slider(InterfaceListener *_listener, int _id, int _x, int _y, int _w, int _h, ofTrueTypeFont *_font, string _text, ofColor _textcolour, ofColor _backgroundColour, ofColor sliderColour);
         float getValue() {return value;}
         void setValue(float val);
         bool keepThisTouch(ofTouchEventArgs &touch);
+        void setSliderType(sliderTypes val);
     protected:
         ofColor sliderColour;
         void drawToBuffer();
@@ -57,6 +59,8 @@ namespace EAVIGUI {
         void touchExit(ofTouchEventArgs &touch);
         void moveSlider(ofTouchEventArgs &touch);
         int touchTarget;
+        sliderTypes sliderType;
+        float barWidth;
         
 
         

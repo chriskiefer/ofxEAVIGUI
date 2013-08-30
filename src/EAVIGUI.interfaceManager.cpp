@@ -356,6 +356,10 @@ namespace EAVIGUI {
     }
 
     void InterfaceManager::touchCancelled(ofTouchEventArgs &touch) {
+        InterfaceObject *obj = InterfaceManager::getTargetObject(touch);
+        if (NULL != obj) {
+            obj->touchCancelled(touch);
+        }
     }
 
 
@@ -463,7 +467,7 @@ namespace EAVIGUI {
     }
 
     void touchListenerProxy::touchCancelled(ofTouchEventArgs &touch) {
-        
+        InterfaceManager::touchCancelled(touch);
     }
 
 

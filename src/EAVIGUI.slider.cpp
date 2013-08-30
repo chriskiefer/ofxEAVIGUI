@@ -17,14 +17,37 @@ namespace EAVIGUI {
         value = 0;
         setIsInteractive(true);
         touchTarget = -1;
+        barWidth = 50;
+        sliderType = BASIC;
+    }
+    
+    void Slider::setSliderType(sliderTypes val) {
+        sliderType = val;
+        invalidate();
     }
     
     void Slider::drawToBuffer() {
         ofFill();
         ofSetColor(backgroundColour);
         ofRect(0,0, w, h);
-        ofSetColor(sliderColour);
-        ofRect(0,0, w * value, h);
+        
+        switch(sliderType) {
+            case BASIC:
+                ofSetColor(sliderColour);
+                ofRect(0,0, w * value, h);
+                break;
+            case BAR:
+                ofSetColor(sliderColour);
+                float barLeft = MAX(0,(w * value) - (barWidth / 2));
+                float actualBarWidth = barWidth;
+                if (value > 0.5) {
+                    actualBarWidth = min(barWidth, w - barLeft);
+                }else{
+                    actualBarWidth = min(barWidth, barWidth + (barLeft - (barWidth / 2)));
+                }
+                ofRect(barLeft, 0, actualBarWidth, h);
+                break;
+        }
         ofSetColor(colour);
         font->drawString(text, 0, font->getLineHeight());
     }
@@ -43,9 +66,24 @@ namespace EAVIGUI {
     }
   
     void Slider::moveSlider(ofTouchEventArgs &touch) {
-        value = (float)touch.x / (float)w;
-        sendCallback(SLIDERMOVED);
-        invalidate();
+        bool validMove = false;
+        switch(sliderType) {
+            case BASIC:
+                validMove = true;
+                break;
+            case BAR:
+                float sliderx = value * static_cast<float>(w);
+                if (fabs(sliderx - touch.x) < (barWidth / 2.0)) {
+                    validMove = true;
+                }
+                break;
+        }
+        if (validMove) {
+            value = (float)touch.x / (float)w;
+            sendCallback(SLIDERMOVED);
+            invalidate();
+        }
+        
     }
     
     void Slider::touchUp(ofTouchEventArgs &touch) {

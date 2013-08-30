@@ -440,6 +440,11 @@ namespace EAVIGUI {
         sendTouchCallback(InterfaceObject::TOUCHUP, touch);
     }
     
+    void InterfaceObject::touchCancelled(ofTouchEventArgs &touch) {
+        touches.remove(touch.id);
+        sendTouchCallback(InterfaceObject::TOUCHCANCELLED, touch);
+    }
+
     void InterfaceObject::touchUpExternal(ofTouchEventArgs &touch) {
         touches.remove(touch.id);
         isTouched = touches.size() > 0;
