@@ -33,7 +33,6 @@
 
 #include "EAVIGUI.label.h"
 #include <iostream>
-//#include "ofmain.h"
 
 using namespace std;
 
@@ -42,7 +41,7 @@ namespace EAVIGUI {
     class Slider : public Label {
     public:
         enum sliderEvents {SLIDERMOVED};
-        enum sliderTypes {BASIC, BAR};
+        enum sliderTypes {TOUCHANYWHERE, PICKUP};
         Slider(InterfaceListener *_listener, int _id, int _x, int _y, int _w, int _h, ofTrueTypeFont *_font, string _text, ofColor _textcolour, ofColor _backgroundColour, ofColor sliderColour);
         float getValue() {return value;}
         void setValue(float val);
@@ -62,10 +61,6 @@ namespace EAVIGUI {
         sliderTypes sliderType;
         float sliderWidth, sliderLeft;
         float barLeft, barWidth;
-        
-        
-
-        
     };
     
 }

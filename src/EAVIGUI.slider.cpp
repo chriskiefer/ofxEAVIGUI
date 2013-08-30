@@ -5,6 +5,31 @@
 //  Created by Chris on 21/06/2013.
 //
 //
+/*
+ *  EAVIGUI
+ *  Copyright 2010 Chris Kiefer. All rights reserved.
+ *
+ *	Permission is hereby granted, free of charge, to any person
+ *	obtaining a copy of this software and associated documentation
+ *	files (the "Software"), to deal in the Software without
+ *	restriction, including without limitation the rights to use,
+ *	copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *	copies of the Software, and to permit persons to whom the
+ *	Software is furnished to do so, subject to the following
+ *	conditions:
+ *
+ *	The above copyright notice and this permission notice shall be
+ *	included in all copies or substantial portions of the Software.
+ *
+ *	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ *	EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+ *	OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ *	NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+ *	HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+ *	WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ *	FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+ *	OTHER DEALINGS IN THE SOFTWARE.
+ */
 
 #include "EAVIGUI.slider.h"
 
@@ -18,7 +43,7 @@ namespace EAVIGUI {
         setIsInteractive(true);
         touchTarget = -1;
         sliderWidth = 50;
-        sliderType = BASIC;
+        sliderType = TOUCHANYWHERE;
         barLeft = sliderWidth / 2.0;
         barWidth = w - sliderWidth;
         sliderLeft = 0;
@@ -35,11 +60,11 @@ namespace EAVIGUI {
         ofRect(0,0, w, h);
         
         switch(sliderType) {
-            case BASIC:
+            case TOUCHANYWHERE:
                 ofSetColor(sliderColour);
                 ofRect(0,0, w * value, h);
                 break;
-            case BAR:
+            case PICKUP:
                 ofSetColor(sliderColour);
                 sliderLeft = barLeft + (barWidth * value) - (sliderWidth / 2.0);
                 ofRect(sliderLeft, 0, sliderWidth, h);
@@ -65,16 +90,15 @@ namespace EAVIGUI {
     void Slider::moveSlider(ofTouchEventArgs &touch) {
         bool validMove = false;
         switch(sliderType) {
-            case BASIC:
+            case TOUCHANYWHERE:
                 value = (float)touch.x / (float)w;
                 validMove = true;
                 break;
-            case BAR:
+            case PICKUP:
                 if (touch.x >= sliderLeft && touch.x < sliderLeft + sliderWidth) {
                     float newValue = (touch.x - (sliderWidth / 2.0)) / barWidth;
                     if (newValue >=0 && newValue <= 1.0) {
                         value = newValue;
-                        cout << value << endl;
                         validMove = true;
                     }
                 }

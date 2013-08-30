@@ -1,8 +1,8 @@
 //
-//  EAVIGUI.imagePanel.h
+//  EAVIGUI.imageSlider.h
 //  FishPolice
 //
-//  Created by Chris on 27/08/2013.
+//  Created by Chris on 30/08/2013.
 //
 //
 /*
@@ -31,27 +31,46 @@
  *	OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef __FishPolice__EAVIGUI_imagePanel__
-#define __FishPolice__EAVIGUI_imagePanel__
+#ifndef __FishPolice__EAVIGUI_imageSlider__
+#define __FishPolice__EAVIGUI_imageSlider__
 
-#include "EAVIGUI.panel.h"
 #include <iostream>
+
+#include "EAVIGUI.interfaceObject.h"
+#include <iostream>
+//#include "ofmain.h"
 
 using namespace std;
 
 namespace EAVIGUI {
     
-    class ImagePanel : public Panel {
+    class ImageSlider : public InterfaceObject {
     public:
-        ImagePanel(InterfaceListener *_listener, int _id, int _x, int _y, int _w, int _h, ofColor _colour, ofColor _borderColour,
-                   unsigned int borderWidth, string fileName);
+        enum sliderEvents {SLIDERMOVED};
+        ImageSlider(InterfaceListener *_listener, int _id, int _x, int _y, string barImageFileName, string sliderImageFileName, string barTouchImageFileName, string sliderTouchImageFileName);
+        void setValue(float val);
+        float getValue() {return value;}
+        bool canInteractAt(int x, int y);
     protected:
         void drawToBuffer();
-        ofImage im;
-        unsigned borderWidth;
-
+        void touchDown(ofTouchEventArgs &touch);
+        void touchMoved(ofTouchEventArgs &touch);
+        void touchUp(ofTouchEventArgs &touch);
+        void touchUpExternal(ofTouchEventArgs &touch);
+        void touchExit(ofTouchEventArgs &touch);
+        void moveSlider(ofTouchEventArgs &touch);
+        void setBarImage(int val);
+        int addBarImage(string filename);
+        
+        ofImage sliderIm, sliderTouchIm, barTouchIm;
+        int currentBarIm;
+        vector<ofImage> barIms;
+        float value;
+        float sliderWidth, sliderLeft;
+        float barLeft, barWidth;
+        int touchTarget;        
     };
     
 }
 
-#endif /* defined(__FishPolice__EAVIGUI_imagePanel__) */
+#endif /* defined(__FishPolice__EAVIGUI_imageSlider__) */
