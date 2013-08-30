@@ -17,8 +17,11 @@ namespace EAVIGUI {
         value = 0;
         setIsInteractive(true);
         touchTarget = -1;
-        barWidth = 50;
+        sliderWidth = 50;
         sliderType = BASIC;
+        barLeft = sliderWidth / 2.0;
+        barWidth = w - sliderWidth;
+        sliderLeft = 0;
     }
     
     void Slider::setSliderType(sliderTypes val) {
@@ -38,14 +41,8 @@ namespace EAVIGUI {
                 break;
             case BAR:
                 ofSetColor(sliderColour);
-                float barLeft = MAX(0,(w * value) - (barWidth / 2));
-                float actualBarWidth = barWidth;
-                if (value > 0.5) {
-                    actualBarWidth = min(barWidth, w - barLeft);
-                }else{
-                    actualBarWidth = min(barWidth, barWidth + (barLeft - (barWidth / 2)));
-                }
-                ofRect(barLeft, 0, actualBarWidth, h);
+                sliderLeft = barLeft + (barWidth * value) - (sliderWidth / 2.0);
+                ofRect(sliderLeft, 0, sliderWidth, h);
                 break;
         }
         ofSetColor(colour);
@@ -69,17 +66,21 @@ namespace EAVIGUI {
         bool validMove = false;
         switch(sliderType) {
             case BASIC:
+                value = (float)touch.x / (float)w;
                 validMove = true;
                 break;
             case BAR:
-                float sliderx = value * static_cast<float>(w);
-                if (fabs(sliderx - touch.x) < (barWidth / 2.0)) {
-                    validMove = true;
+                if (touch.x >= sliderLeft && touch.x < sliderLeft + sliderWidth) {
+                    float newValue = (touch.x - (sliderWidth / 2.0)) / barWidth;
+                    if (newValue >=0 && newValue <= 1.0) {
+                        value = newValue;
+                        cout << value << endl;
+                        validMove = true;
+                    }
                 }
                 break;
         }
         if (validMove) {
-            value = (float)touch.x / (float)w;
             sendCallback(SLIDERMOVED);
             invalidate();
         }

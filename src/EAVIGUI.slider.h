@@ -60,7 +60,9 @@ namespace EAVIGUI {
         void moveSlider(ofTouchEventArgs &touch);
         int touchTarget;
         sliderTypes sliderType;
-        float barWidth;
+        float sliderWidth, sliderLeft;
+        float barLeft, barWidth;
+        
         
 
         
