@@ -171,11 +171,11 @@ namespace EAVIGUI {
                     effects.at(e)->draw();
                     effects.at(e)->validate();
                 }
-                if (!enabled) {
-                    ofSetColor(150, 150, 150, 200);
-                    ofFill();
-                    ofRect(0,0,w,h);
-                }
+//                if (!enabled) {
+//                    ofSetColor(150, 150, 150, 200);
+//                    ofFill();
+//                    ofRect(0,0,w,h);
+//                }
                 tex->end();
                 postDrawToBuffer();
             }

@@ -38,7 +38,6 @@
 
 #include "EAVIGUI.interfaceObject.h"
 #include <iostream>
-//#include "ofmain.h"
 
 using namespace std;
 
