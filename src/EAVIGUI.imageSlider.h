@@ -50,6 +50,8 @@ namespace EAVIGUI {
         void setValue(float val);
         float getValue() {return value;}
         bool canInteractAt(int x, int y);
+        void setBarImage(int val);
+        int addBarImage(string filename);
     protected:
         void drawToBuffer();
         void touchDown(ofTouchEventArgs &touch);
@@ -57,9 +59,7 @@ namespace EAVIGUI {
         void touchUp(ofTouchEventArgs &touch);
         void touchUpExternal(ofTouchEventArgs &touch);
         void touchExit(ofTouchEventArgs &touch);
-        void moveSlider(ofTouchEventArgs &touch);
-        void setBarImage(int val);
-        int addBarImage(string filename);
+        virtual void moveSlider(ofTouchEventArgs &touch);
         
         ofImage sliderIm, sliderTouchIm, barTouchIm;
         int currentBarIm;
