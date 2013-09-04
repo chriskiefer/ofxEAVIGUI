@@ -90,7 +90,6 @@ namespace EAVIGUI {
         float theta = angleBetween(touch.x, touch.y, Q2.x, Q2.y);
         //wrap?
         if (theta < 0) theta += TWO_PI;
-        cout << theta << endl;
         bool validAngle = false;
         if (bound1 < arcAngle && bound2 > TWO_PI - arcAngle) {
             validAngle = theta <= bound1 || theta >= bound2;
@@ -106,7 +105,6 @@ namespace EAVIGUI {
                 }else{
                     value = (angleFromCenter + (TWO_PI - bound2)) / arcAngle;
                 }
-                cout << value << endl;
             }else{
                 value = (angleFromCenter - bound1) / arcAngle;
             }
