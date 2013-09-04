@@ -35,6 +35,7 @@ namespace EAVIGUI {
         void setState(int val);
         int getState(){return currentState;}
         int addState(string imageFileName);
+        void addDisabledState(string filename);
     protected:
         void init();
         virtual void drawToBuffer();
@@ -42,6 +43,7 @@ namespace EAVIGUI {
         vector<ofImage> states;
         int currentState;
         bool canTouchTranparency;  //if false, reject touches on transparent pixels
+        ofImage disabledIm;
     };
     
 };

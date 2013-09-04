@@ -16,6 +16,7 @@ namespace EAVIGUI {
         touchIm.loadImage(touchOverlayImageFilename);
         canTouchTranparency = false;
         currentState = 0;
+        disabledIm = states[0];
         init();
     }
     
@@ -27,11 +28,14 @@ namespace EAVIGUI {
     }
     
     void MultiImageButton::drawToBuffer() {
-        states[currentState].draw(0,0,w,h);
-        if (isTouched) {
-            touchIm.draw(0,0,w,h);
+        if (isEnabled()) {
+            states[currentState].draw(0,0,w,h);
+            if (isTouched) {
+                touchIm.draw(0,0,w,h);
+            }
+        }else{
+            disabledIm.draw(0,0,w,h);
         }
-        
     }
 
     void MultiImageButton::setCanTouchTranparency(bool newVal) {
@@ -90,5 +94,9 @@ namespace EAVIGUI {
         return states.size() - 1;
     }
   
+    void MultiImageButton::addDisabledState(string filename) {
+        disabledIm.loadImage(ofToDataPath(filename));
+    }
+
     
 };
