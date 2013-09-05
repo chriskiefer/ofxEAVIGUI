@@ -37,16 +37,14 @@
 #include <iostream>
 
 #include "EAVIGUI.interfaceObject.h"
-#include <iostream>
 
-using namespace std;
 
 namespace EAVIGUI {
     
     class ImageSlider : public InterfaceObject {
     public:
         enum sliderEvents {SLIDERMOVED};
-        ImageSlider(InterfaceListener *_listener, int _id, int _x, int _y, string barImageFileName, string sliderImageFileName, string barTouchImageFileName, string sliderTouchImageFileName);
+        ImageSlider(InterfaceListener *_listener, int _id, int _x, int _y, std::string barImageFileName, std::string sliderImageFileName, std::string barTouchImageFileName, std::string sliderTouchImageFileName);
         void setValue(float val);
         float getValue() {return value;}
         bool canInteractAt(int x, int y);
@@ -63,7 +61,7 @@ namespace EAVIGUI {
         
         ofImage sliderIm, sliderTouchIm, barTouchIm;
         int currentBarIm;
-        vector<ofImage> barIms;
+        std::vector<ofImage> barIms;
         float value;
         float sliderWidth, sliderLeft;
         float barLeft, barWidth;

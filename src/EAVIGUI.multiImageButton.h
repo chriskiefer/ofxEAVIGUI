@@ -33,15 +33,17 @@ namespace EAVIGUI {
         void touchExit(ofTouchEventArgs &touch);
         void setEnabled(bool newEnabled);
         void setState(int val);
+        void setTouchState(int val);
         int getState(){return currentState;}
         int addState(string imageFileName);
+        int addTouchState(string imageFileName);
         void addDisabledState(string filename);
     protected:
         void init();
         virtual void drawToBuffer();
-        ofImage touchIm;
+        vector<ofImage> touchStates;
         vector<ofImage> states;
-        int currentState;
+        int currentState, currentTouchState;
         bool canTouchTranparency;  //if false, reject touches on transparent pixels
         ofImage disabledIm;
     };

@@ -138,9 +138,9 @@ namespace EAVIGUI {
         void setAnchorPoint(float ax, float ay);
         void getAnchorPoint(float &ax, float &ay);
 
-        bool pulsate;
-        float pulsateSpeed;
-        float pulsateMin, pulsateMax;
+//        bool pulsate;
+//        float pulsateSpeed;
+//        float pulsateMin, pulsateMax;
         
         void addEffect(baseEffect *newEffect);
         void dropEffects();

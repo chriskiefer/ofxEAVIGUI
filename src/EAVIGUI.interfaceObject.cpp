@@ -72,10 +72,10 @@ namespace EAVIGUI {
         setScale(1.0);
         setAnchorPoint(0.5, 0.5);
         calcScaleMods();
-        pulsate = false;
-        pulsateSpeed = 0.007;
-        pulsateMin = 0.5;
-        pulsateMax = 1.0;
+//        pulsate = false;
+//        pulsateSpeed = 0.007;
+//        pulsateMin = 0.5;
+//        pulsateMax = 1.0;
         enabled = true;
         isTouched = false;
         anchorX = anchorY = 0;
@@ -206,11 +206,11 @@ namespace EAVIGUI {
             }
             //visible now?
             if (visible) {
-                float pulsateVal = 0;
-                if (pulsateSpeed > 0) {
-                    pulsateVal = (fabs(sin(ofGetElapsedTimeMillis() * pulsateSpeed)) * (pulsateMax - pulsateMin)) + pulsateMin;
-                }
-                ofSetColor(red, green, blue, pulsate ? fadeAlpha * pulsateVal : fadeAlpha);
+//                float pulsateVal = 0;
+//                if (pulsateSpeed > 0) {
+//                    pulsateVal = (fabs(sin(ofGetElapsedTimeMillis() * pulsateSpeed)) * (pulsateMax - pulsateMin)) + pulsateMin;
+//                }
+                ofSetColor(red, green, blue, fadeAlpha);
                 
                 glPushMatrix();
 
@@ -334,6 +334,7 @@ namespace EAVIGUI {
         if (!visible)
             allocateFBO();
         visible = true;
+        invalidate();
     }
     
     void InterfaceObject::hide() {

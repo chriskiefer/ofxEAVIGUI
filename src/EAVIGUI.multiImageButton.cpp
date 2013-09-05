@@ -13,9 +13,10 @@ namespace EAVIGUI {
     MultiImageButton::MultiImageButton(InterfaceListener *_listener, int _id, int _x, int _y, string state0FileName, string touchOverlayImageFilename)  : InterfaceObject(_listener, _id, _x, _y) {
         states.resize(1);
         states[0].loadImage(state0FileName);
-        touchIm.loadImage(touchOverlayImageFilename);
+        touchStates.resize(1);
+        touchStates[0].loadImage(touchOverlayImageFilename);
         canTouchTranparency = false;
-        currentState = 0;
+        currentState = currentTouchState = 0;
         disabledIm = states[0];
         init();
     }
@@ -31,11 +32,12 @@ namespace EAVIGUI {
         if (isEnabled()) {
             states[currentState].draw(0,0,w,h);
             if (isTouched) {
-                touchIm.draw(0,0,w,h);
+                touchStates[currentTouchState].draw(0,0,w,h);
             }
         }else{
             disabledIm.draw(0,0,w,h);
         }
+        cout << "MI draw " << currentState << endl;
     }
 
     void MultiImageButton::setCanTouchTranparency(bool newVal) {
@@ -87,13 +89,35 @@ namespace EAVIGUI {
         }
     }
 
+    void MultiImageButton::setTouchState(int val) {
+        if (val >= 0 && val < touchStates.size()) {
+            currentTouchState = val;
+            invalidate();
+        }
+    }
+
     int MultiImageButton::addState(string imageFileName) {
         ofImage im;
         im.loadImage(ofToDataPath(imageFileName));
         states.push_back(im);
+        if (im.width > w || im.height > h) {
+            setWidth(im.width);
+            setHeight(im.height);
+        }
         return states.size() - 1;
     }
-  
+
+    int MultiImageButton::addTouchState(string imageFileName) {
+        ofImage im;
+        im.loadImage(ofToDataPath(imageFileName));
+        touchStates.push_back(im);
+        if (im.width > w || im.height > h) {
+            setWidth(im.width);
+            setHeight(im.height);
+        }
+        return touchStates.size() - 1;
+    }
+
     void MultiImageButton::addDisabledState(string filename) {
         disabledIm.loadImage(ofToDataPath(filename));
     }

@@ -33,6 +33,7 @@
 
 #include "EAVIGUI.imageSlider.h"
 
+using namespace std;
 
 namespace EAVIGUI {
     ImageSlider::ImageSlider(InterfaceListener *_listener, int _id, int _x, int _y, string barImageFileName, string sliderImageFileName,
