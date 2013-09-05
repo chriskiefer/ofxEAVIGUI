@@ -45,21 +45,33 @@ namespace EAVIGUI {
         xValue = 0.5;
         yValue = 0.5;
         markerDiameter = min(w,h) * 0.2;
+        hasBackground = hasDisabldBackground = false;
     }
 
     
     void XYPad::drawToBuffer() {
-        ofFill();
-        ofSetColor(backgroundColour);
-        ofRect(0,0,w,h);
-        ofSetColor(markerColour);
-        ofNoFill();
-        float xpos = xValue * w;
-        float ypos = yValue * h;
-        ofCircle(xpos, ypos, markerDiameter);
-        ofSetColor(230,230,230,100);
-        ofLine(xpos, 0, xpos, h);
-        ofLine(0,ypos, w, ypos);
+        if (hasBackground) {
+            ofSetColor(255);
+            if (isEnabled()) {
+                background.draw(0,0,w,h);
+            }else{
+                disabledBackground.draw(0,0,w,h);
+            }
+        }else{
+            ofSetColor(backgroundColour);
+            ofFill();
+            ofRect(0,0,w,h);
+        }
+        if (isEnabled()) {
+            ofSetColor(markerColour);
+            ofNoFill();
+            float xpos = xValue * w;
+            float ypos = yValue * h;
+            ofCircle(xpos, ypos, markerDiameter);
+            ofSetColor(230,230,230,100);
+            ofLine(xpos, 0, xpos, h);
+            ofLine(0,ypos, w, ypos);
+        }
     }
     
     void XYPad::touchDown(ofTouchEventArgs &touch) {
@@ -87,6 +99,15 @@ namespace EAVIGUI {
         yValue = val;
         invalidate();
     }
-
+    
+    void XYPad::setBackground(string filename) {
+        background.loadImage(ofToDataPath(filename));
+        hasBackground = true;
+    }
+    
+    void XYPad::setDisabledBackground(string filename){
+        disabledBackground.loadImage(ofToDataPath(filename));
+        hasDisabldBackground = true;
+    }
 
 };

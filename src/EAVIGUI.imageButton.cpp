@@ -53,6 +53,7 @@ namespace EAVIGUI {
         setIsInteractive(true);
         imColor = ofColor(255,255,255);
         isTouched = false;
+        hasDisabledIm = false;
     }
     
     void ImageButton::loadNewImage(string imageFileName) {
@@ -65,10 +66,14 @@ namespace EAVIGUI {
     void ImageButton::drawToBuffer() {
         ofEnableAlphaBlending();
         ofSetColor(imColor);
-        if (isTouched) {
-            touchIm.draw(0,0,w,h);
+        if (!isEnabled() && hasDisabledIm) {
+            disabledIm.draw(0,0,w,h);
         }else{
-            im.draw(0,0,w,h);
+            if (isTouched) {
+                touchIm.draw(0,0,w,h);
+            }else{
+                im.draw(0,0,w,h);
+            }
         }
     }
     
@@ -117,6 +122,10 @@ namespace EAVIGUI {
     }
 
 
+    void ImageButton::setDisabledState(string filename) {
+        disabledIm.loadImage(ofToDataPath(filename));
+        hasDisabledIm = true;
+    }
 
     
 }

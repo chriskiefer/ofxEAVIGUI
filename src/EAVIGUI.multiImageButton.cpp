@@ -37,7 +37,6 @@ namespace EAVIGUI {
         }else{
             disabledIm.draw(0,0,w,h);
         }
-        cout << "MI draw " << currentState << endl;
     }
 
     void MultiImageButton::setCanTouchTranparency(bool newVal) {

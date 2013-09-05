@@ -58,6 +58,8 @@ namespace EAVIGUI {
         }
         void setXValue(float val);
         void setYValue(float val);
+        void setBackground(string filename);
+        void setDisabledBackground(string filename);
     protected:
         float xValue, yValue;
         ofColor markerColour;
@@ -67,7 +69,8 @@ namespace EAVIGUI {
         void touchMoved(ofTouchEventArgs &touch);
         void moveMarker(ofTouchEventArgs &touch);
         float markerDiameter;
-
+        ofImage background, disabledBackground;
+        bool hasBackground, hasDisabldBackground;
         
     };
     
