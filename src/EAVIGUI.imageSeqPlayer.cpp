@@ -15,8 +15,8 @@ namespace EAVIGUI {
         framePeriod =50; //milliseconds
         lastFrameTS = ofGetElapsedTimeMillis();
         currIm = &imSeq->getImage(0);
-        setWidth(currIm->getWidth()-1);
-        setHeight(currIm->getHeight()-1);
+        setWidth(currIm->getWidth()-10);
+        setHeight(currIm->getHeight()-10);
         seqIndex = 0;
         setIsInteractive(false);
         backgroundColor = ofColor::black;
@@ -48,6 +48,11 @@ namespace EAVIGUI {
         ofSetColor(backgroundColor);
         ofRect(0,0,w,h);
         ofSetColor(ofColor::white, alpha);
-        currIm->draw(0,0);
+        currIm->draw(0,0, w, h);
     }
+    
+    bool ImageSequencePlayer::enableAlphaWhenDrawing() {
+        return true;
+    }
+
 };

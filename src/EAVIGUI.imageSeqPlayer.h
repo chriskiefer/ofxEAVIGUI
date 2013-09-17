@@ -26,6 +26,7 @@ namespace EAVIGUI {
         void setFrameTimeInMillis(float val);
         void setAlpha(float newVal) {alpha = newVal; invalidate();}
         void setBackgroundColor(ofColor newCol) {backgroundColor = newCol; invalidate();}
+        bool enableAlphaWhenDrawing();
     protected:
         void drawToBuffer();
         ImageSequence *imSeq;

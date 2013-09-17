@@ -163,7 +163,7 @@ namespace EAVIGUI {
                 tex->begin();
                 ofEnableAlphaBlending();
                 ofClear(255);
-                ofBackground(255,0);
+                ofBackground(0,0);
 
                 drawToBuffer();
                 
@@ -229,6 +229,18 @@ namespace EAVIGUI {
                     glTranslatef(-getScaledWidth()/2.0, -getScaledHeight()/2.0,0);
                 }
 
+                if (enableAlphaWhenDrawing()) {
+                    ofEnableAlphaBlending();
+                }else{
+                    ofDisableAlphaBlending();
+                }
+                //#ifndef TARGET_OPENGLES
+//				glBlendEquation(GL_FUNC_ADD);
+//#endif
+//                glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+//                ofDisableAlphaBlending();
+//                glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+//                glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_ONE);
                 tex->draw(0, 0, fboWidth * totalScale, fboHeight *totalScale);
                 
 #ifdef GUIDEGBUG
@@ -847,6 +859,18 @@ namespace EAVIGUI {
     
     bool InterfaceObject::isEnabled() {
         return enabled;
+    }
+
+    bool InterfaceObject::enableAlphaWhenDrawing() {
+        return true;
+    }
+
+    void InterfaceObject::saveEnabledState() {
+        wasEnabled = enabled;
+    } //used when showing modal groups
+    
+    void InterfaceObject::restoreEnabledState() {
+        setEnabled(wasEnabled);
     }
 
 

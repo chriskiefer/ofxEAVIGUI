@@ -370,10 +370,15 @@ namespace EAVIGUI {
                 it->second = NULL;
             }
         }
-        //disable other controls
+        //disable/enable other controls
         for (int i=0; i < intObjs.size(); i++) {
             if (std::find(modalGroup->begin(), modalGroup->end(), intObjs[i]) == modalGroup->end()) {
-                intObjs[i]->setEnabled(!visible);
+                if (visible) {
+                    intObjs[i]->saveEnabledState();
+                    intObjs[i]->setEnabled(false);
+                }else{
+                    intObjs[i]->restoreEnabledState();
+                }
             }
         }
         for(int i=0; i < modalGroup->size(); i++) {

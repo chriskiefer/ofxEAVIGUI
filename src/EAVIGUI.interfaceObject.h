@@ -89,6 +89,8 @@ namespace EAVIGUI {
         virtual void touchExit(ofTouchEventArgs &touch);
         virtual void touchCancelled(ofTouchEventArgs &touch);
         virtual bool keepThisTouch(ofTouchEventArgs &touch); //don't exit, continue piping this touch to the control when out of its bounds
+        void saveEnabledState(); //used when showing modal groups
+        void restoreEnabledState();
         
         
         void addChild(InterfaceObject* child);
@@ -152,6 +154,7 @@ namespace EAVIGUI {
         void enableExitFlickDetection(bool val);
         void enableExternalTouchUp(bool val);
         virtual void touchMovingToExternal(ofTouchEventArgs &touch);
+        virtual bool enableAlphaWhenDrawing();
     protected:
         InterfaceObject();
         void init(InterfaceListener *_listener, int _id, int _x, int _y);
@@ -193,7 +196,8 @@ namespace EAVIGUI {
         list<int> touches;
         bool isTouched;
         int exitGestureStartIdx;
-
+        bool wasEnabled;
+        
     private:
         void show();
         void hide();
