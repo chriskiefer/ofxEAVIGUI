@@ -61,7 +61,7 @@ namespace EAVIGUI {
     public:
 
         enum InterfaceManagerEvents {
-            TOUCHDOUBLETAP, TOUCHDOWN, TOUCHMOVED, TOUCHMOVED_EXTERNAL, TOUCHUP, TOUCHEXIT, TOUCHUP_EXTERNAL, MOUSEPRESSED, MOUSERELEASED, MOUSEDRAGGED, MOUSEMOVED, TOUCHEXITFLICK
+            TOUCHDOUBLETAP, TOUCHDOWN, TOUCHMOVED, TOUCHMOVED_EXTERNAL, TOUCHUP, TOUCHEXIT, TOUCHUP_EXTERNAL, MOUSEPRESSED, MOUSERELEASED, MOUSEDRAGGED, MOUSEMOVED, TOUCHEXITFLICK, TOUCHANDHOLD
         };
         
         
@@ -92,7 +92,7 @@ namespace EAVIGUI {
         void addChild(InterfaceObject* child);
         bool hasChildren();
         void invalidate();
-        void setVisible(bool val, bool noFade = false);
+        virtual void setVisible(bool val, bool noFade = false);
         bool isVisible();
         bool isInteractive();
         void setIsInteractive(bool val) {interactive = val;}
@@ -115,9 +115,11 @@ namespace EAVIGUI {
         InterfaceObject* setRelativePositioning(float xpos, float ypos);
         InterfaceObject* setRelativePositioning(float xpos, int xPixelOffset, float ypos, int yPixelOffset);
         void transformTouchForScreenRotation(ofTouchEventArgs &touch);
-        
         virtual bool canInteractAt(int x, int y); //accept touch/mouse event here? or pass on to next object
-
+        void moveTo(float x, float y);
+        void moveTo(ofPoint newPos);
+        ofVec2f getPosition(){return ofVec2f(x,y);}
+        ofVec2f getCenterPosition() {return ofVec2f(cx, cy) + getPosition();}
         
         screenRotationModes screenRotMode;
         ofPoint rotPt0, rotPt90, rotPt180, rotPt270;
@@ -148,6 +150,12 @@ namespace EAVIGUI {
         void getTouchDownPoint(int &x, int &y);
         
         void enableExitFlickDetection(bool val);
+        
+        bool isDraggable(){return draggable;}
+        void setIsDraggable(bool val) {draggable = val;}
+        bool beingTouched(){return isTouched;}
+        void setTouchAndHoldTime(int newVal);
+        void enableTouchAndHold(bool val);
     protected:
         InterfaceObject();
         void init(InterfaceListener *_listener, int _id, int _x, int _y);
@@ -187,6 +195,13 @@ namespace EAVIGUI {
         
         list<int> touches;
         bool isTouched;
+        
+        bool draggable;
+        ofPoint dragPoint;
+        int touchAndHoldTime;
+        long touchAndHoldTS;
+        bool touchAndHoldSent;
+        bool touchAndHoldEnabled;
     private:
         void show();
         void hide();

@@ -44,7 +44,11 @@
 #include <map>
 
 #ifdef TARGET_OF_IPHONE
+#if OF_VERSION_MINOR == 8
+#include "ofxIOSAlerts.h"
+#else
 #include "ofxiPhoneAlerts.h"
+#endif
 #endif
 
 namespace EAVIGUI {
@@ -116,10 +120,6 @@ namespace EAVIGUI {
         static touchObjectMap touchedObjects;
         static touchObjectMap externalTouches;
         static InterfaceObject* queryTouchObjectMap(touchObjectMap& m, int key);
-
-
-
-        
     };
 
     class touchListenerProxy {

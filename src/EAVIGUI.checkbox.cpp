@@ -14,7 +14,7 @@ namespace EAVIGUI {
     {
         int mindim = min(_w, _h);
         checkBoxSize = mindim * 0.8;
-        gap = (mindim - checkBoxSize) / 2.0;
+        gap = floor((mindim - checkBoxSize) / 2.0);
         setIsInteractive(true);
         checked = false;
         leftOffset = -5;

@@ -83,6 +83,10 @@ namespace EAVIGUI {
         tx = ty = 0; //touchDown Point
         ex = ey = 0;
         exitFlickDetection = false;
+        draggable = false;
+        touchAndHoldTime = 500; //milliseconds
+        touchAndHoldSent = false;
+        touchAndHoldEnabled = false;
     }
     
     InterfaceObject::~InterfaceObject() {
@@ -118,7 +122,13 @@ namespace EAVIGUI {
         delete tex;
     }
     
-    void InterfaceObject::update(){	
+    void InterfaceObject::update(){
+        if (touchAndHoldEnabled && touches.size() > 0) {
+            if (!touchAndHoldSent && ofGetElapsedTimeMillis() - touchAndHoldTS > touchAndHoldTime) {
+                sendCallback(TOUCHANDHOLD);
+                touchAndHoldSent = true;
+            }
+        }
     }
     
     void InterfaceObject::setScale(float newScale) {
@@ -335,6 +345,16 @@ namespace EAVIGUI {
         visible = false;
     }
     
+    void InterfaceObject::moveTo(float newx, float newy) {
+        x = newx;
+        y = newy;
+    }
+    
+    void InterfaceObject::moveTo(ofPoint newPos) {
+        x = newPos.x;
+        y = newPos.y;
+    }
+
     
     void InterfaceObject::setVisible(bool val, bool noFade) {
         if (!val) { //hiding
@@ -345,6 +365,10 @@ namespace EAVIGUI {
                 fadeOutTimeStamp = ofGetElapsedTimeMillis();
                 fadeInTimeStamp = -1;
             }
+            
+            //and cancel all touches
+            isTouched = false;
+            touches.clear();
         }
         else { //showing
             show();
@@ -381,6 +405,10 @@ namespace EAVIGUI {
     }
     
     void InterfaceObject::touchDown(ofTouchEventArgs &touch) {
+        if (touchAndHoldEnabled && touches.size() == 0) {
+            touchAndHoldTS = ofGetElapsedTimeMillis();
+            touchAndHoldSent = false;
+        }
         touches.push_back(touch.id);
         touchHistory[touch.id].clear();
         isTouched = true;
@@ -388,6 +416,9 @@ namespace EAVIGUI {
         ty = touch.y;
         touchHistory[touch.id].push_back(ofPoint(touch.x, touch.y));
         touchVelocity[touch.id] = 0;
+        if (draggable) {
+            dragPoint = ofPoint(tx, ty);
+        }
         sendTouchCallback(InterfaceObject::TOUCHDOWN, touch);
     }
     
@@ -397,6 +428,12 @@ namespace EAVIGUI {
     
     void InterfaceObject::touchMoved(ofTouchEventArgs &touch) {
         recordTouchMoved(touch);
+        if (isTouched && draggable) {
+            if (touchAndHoldEnabled) {
+                touchAndHoldTS = ofGetElapsedTimeMillis(); //postpone press and hold
+            }
+            moveTo(x + touch.x - dragPoint.x, y + touch.y - dragPoint.y);
+        }
         sendTouchCallback(InterfaceObject::TOUCHMOVED, touch);
     }
     
@@ -430,7 +467,9 @@ namespace EAVIGUI {
     void InterfaceObject::touchUp(ofTouchEventArgs &touch) {
         touches.remove(touch.id);
         isTouched = touches.size() > 0;
-        sendTouchCallback(InterfaceObject::TOUCHUP, touch);
+        if (!touchAndHoldEnabled || (touchAndHoldEnabled && !touchAndHoldSent)) {
+            sendTouchCallback(InterfaceObject::TOUCHUP, touch);
+        }
     }
     
     void InterfaceObject::touchUpExternal(ofTouchEventArgs &touch) {
@@ -818,7 +857,15 @@ namespace EAVIGUI {
     void InterfaceObject::enableExitFlickDetection(bool val) {
         exitFlickDetection = val;
     }
-      
+    
+    void InterfaceObject::setTouchAndHoldTime(int newVal) {
+        touchAndHoldTime = newVal;
+    }
+
+    void InterfaceObject::enableTouchAndHold(bool val) {
+        touchAndHoldEnabled = val;
+    }
+    
     //from http://forum.openframeworks.cc/index.php?topic=4448.0
     void quadraticBezierVertex(float cpx, float cpy, float x, float y, float prevX, float prevY) {
         float cp1x = prevX + 2.0/3.0*(cpx - prevX);

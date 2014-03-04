@@ -84,8 +84,6 @@ namespace EAVIGUI {
             default:
                 break;
         }
-//        ofDisableAlphaBlending();
-        ofEnableAlphaBlending();
         font->drawString(text, textleft, textTop);
         
     }
