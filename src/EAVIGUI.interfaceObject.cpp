@@ -72,10 +72,10 @@ namespace EAVIGUI {
         setScale(1.0);
         setAnchorPoint(0.5, 0.5);
         calcScaleMods();
-        pulsate = false;
-        pulsateSpeed = 0.007;
-        pulsateMin = 0.5;
-        pulsateMax = 1.0;
+//        pulsate = false;
+//        pulsateSpeed = 0.007;
+//        pulsateMin = 0.5;
+//        pulsateMax = 1.0;
         enabled = true;
         isTouched = false;
         anchorX = anchorY = 0;
@@ -87,6 +87,8 @@ namespace EAVIGUI {
         touchAndHoldTime = 500; //milliseconds
         touchAndHoldSent = false;
         touchAndHoldEnabled = false;
+        exitGestureStartIdx = 0;
+        externalTouchUp = false;
     }
     
     InterfaceObject::~InterfaceObject() {
@@ -171,7 +173,7 @@ namespace EAVIGUI {
                 tex->begin();
                 ofEnableAlphaBlending();
                 ofClear(255);
-                ofBackground(255,0);
+                ofBackground(0,0);
 
                 drawToBuffer();
                 
@@ -179,6 +181,11 @@ namespace EAVIGUI {
                     effects.at(e)->draw();
                     effects.at(e)->validate();
                 }
+//                if (!enabled) {
+//                    ofSetColor(150, 150, 150, 200);
+//                    ofFill();
+//                    ofRect(0,0,w,h);
+//                }
                 tex->end();
                 postDrawToBuffer();
             }
@@ -209,11 +216,11 @@ namespace EAVIGUI {
             }
             //visible now?
             if (visible) {
-                float pulsateVal = 0;
-                if (pulsateSpeed > 0) {
-                    pulsateVal = (fabs(sin(ofGetElapsedTimeMillis() * pulsateSpeed)) * (pulsateMax - pulsateMin)) + pulsateMin;
-                }
-                ofSetColor(red, green, blue, pulsate ? fadeAlpha * pulsateVal : fadeAlpha);
+//                float pulsateVal = 0;
+//                if (pulsateSpeed > 0) {
+//                    pulsateVal = (fabs(sin(ofGetElapsedTimeMillis() * pulsateSpeed)) * (pulsateMax - pulsateMin)) + pulsateMin;
+//                }
+                ofSetColor(red, green, blue, fadeAlpha);
                 
                 glPushMatrix();
 
@@ -232,6 +239,18 @@ namespace EAVIGUI {
                     glTranslatef(-getScaledWidth()/2.0, -getScaledHeight()/2.0,0);
                 }
 
+                if (enableAlphaWhenDrawing()) {
+                    ofEnableAlphaBlending();
+                }else{
+                    ofDisableAlphaBlending();
+                }
+                //#ifndef TARGET_OPENGLES
+//				glBlendEquation(GL_FUNC_ADD);
+//#endif
+//                glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+//                ofDisableAlphaBlending();
+//                glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+//                glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_ONE);
                 tex->draw(0, 0, fboWidth * totalScale, fboHeight *totalScale);
                 
 #ifdef GUIDEGBUG
@@ -337,6 +356,7 @@ namespace EAVIGUI {
         if (!visible)
             allocateFBO();
         visible = true;
+        invalidate();
     }
     
     void InterfaceObject::hide() {
@@ -472,37 +492,46 @@ namespace EAVIGUI {
         }
     }
     
+    void InterfaceObject::touchCancelled(ofTouchEventArgs &touch) {
+        touches.remove(touch.id);
+        sendTouchCallback(InterfaceObject::TOUCHCANCELLED, touch);
+    }
+
     void InterfaceObject::touchUpExternal(ofTouchEventArgs &touch) {
         touches.remove(touch.id);
         isTouched = touches.size() > 0;
-        sendTouchCallback(InterfaceObject::TOUCHUP_EXTERNAL, touch);
-        bool flick = false;
-//        float flickangle = 0;
-        float overallAvgVel=0, lateAvgVel=0;
-        if (touchHistory[touch.id].size() > 3) {
-            for(int i=1; i < touchHistory[touch.id].size(); i++) {
-                overallAvgVel += ofDist(touchHistory[touch.id][i-1].x, touchHistory[touch.id][i-1].y, touchHistory[touch.id][i].x, touchHistory[touch.id][i].x);
+        if (exitFlickDetection) {
+            bool flick = false;
+    //        float flickangle = 0;
+            float overallAvgVel=0, lateAvgVel=0;
+            if (touchHistory[touch.id].size() - exitGestureStartIdx > 3) {
+                for(int i=exitGestureStartIdx+1; i < touchHistory[touch.id].size(); i++) {
+                    float vel = ofDist(touchHistory[touch.id][i-1].x, touchHistory[touch.id][i-1].y, touchHistory[touch.id][i].x, touchHistory[touch.id][i].x);
+                    overallAvgVel += vel;
+                    cout << vel << ", ";
+                }
+                overallAvgVel /= touchHistory[touch.id].size();
+                int pt = (touchHistory[touch.id].size() - exitGestureStartIdx) / 2;
+                for(int i=pt; i < touchHistory[touch.id].size(); i++) {
+                    lateAvgVel += ofDist(touchHistory[touch.id][i-1].x, touchHistory[touch.id][i-1].y, touchHistory[touch.id][i].x, touchHistory[touch.id][i].x);
+                }
+                lateAvgVel /= pt;
+                float velRatio = overallAvgVel > 0 ? lateAvgVel / overallAvgVel : 0;
+                cout << endl << "Avg: " << overallAvgVel << ", " << lateAvgVel << ", " << velRatio << endl;
+    //            for(int i=0; i < touchHistory[touch.id].size(); i++) {
+    //                cout << touchHistory[touch.id].at(i) << " -- ";
+    //            }
+                cout << endl;
+                flick = velRatio > 1.4;
             }
-            overallAvgVel /= touchHistory[touch.id].size();
-            int pt = touchHistory[touch.id].size() / 2;
-            for(int i=pt; i < touchHistory[touch.id].size(); i++) {
-                lateAvgVel += ofDist(touchHistory[touch.id][i-1].x, touchHistory[touch.id][i-1].y, touchHistory[touch.id][i].x, touchHistory[touch.id][i].x);
+            if (flick) {
+                sendCallback(TOUCHEXITFLICK);
+            }else{
+                sendCallback(TOUCHEXIT);
             }
-            lateAvgVel /= pt;
-            float velRatio = lateAvgVel / overallAvgVel;
-            cout << "Avg: " << overallAvgVel << ", " << lateAvgVel << ", " << velRatio << endl;
-            flick = velRatio > 1.4;
-        }
-        if (flick) {
-            sendCallback(TOUCHEXITFLICK);
         }else{
-            sendCallback(TOUCHEXIT);
+            sendTouchCallback(InterfaceObject::TOUCHUP_EXTERNAL, touch);            
         }
-        //        cout << touchVelocity << ", " << touchAcceleration <<  endl;
-        //        if (touchVelocity > min(getScaledWidth(), getScaledHeight()) / 5.0 ) {
-        //            flick = true;
-        //            angle = geom::angleBetween2(ex, ey, tx, ty);
-        //        }
     }
 
     
@@ -850,8 +879,8 @@ namespace EAVIGUI {
 
     
     bool InterfaceObject::keepThisTouch(ofTouchEventArgs &touch) {
-        //could this be the start of a flick?
-        return exitFlickDetection && touchVelocity[touch.id] > min(getScaledWidth(), getScaledHeight()) / 5.0;
+        //could this be the start of a flick? or are we monitoring for external touch up
+        return externalTouchUp || (exitFlickDetection && touchVelocity[touch.id] > min(getScaledWidth(), getScaledHeight()) / 5.0);
     }
     
     void InterfaceObject::enableExitFlickDetection(bool val) {
@@ -865,6 +894,33 @@ namespace EAVIGUI {
     void InterfaceObject::enableTouchAndHold(bool val) {
         touchAndHoldEnabled = val;
     }
+    void InterfaceObject::enableExternalTouchUp(bool val) {
+        externalTouchUp = val;
+    }
+
+    
+    void InterfaceObject::touchMovingToExternal(ofTouchEventArgs &touch) {
+        exitGestureStartIdx = MAX(0, touchHistory[touch.id].size() - 5);
+    }
+    
+    bool InterfaceObject::isEnabled() {
+        return enabled;
+    }
+
+    bool InterfaceObject::enableAlphaWhenDrawing() {
+        return true;
+    }
+
+    void InterfaceObject::saveEnabledState() {
+        wasEnabled = enabled;
+    } //used when showing modal groups
+    
+    void InterfaceObject::restoreEnabledState() {
+        setEnabled(wasEnabled);
+    }
+
+
+    
     
     //from http://forum.openframeworks.cc/index.php?topic=4448.0
     void quadraticBezierVertex(float cpx, float cpy, float x, float y, float prevX, float prevY) {

@@ -61,7 +61,8 @@ namespace EAVIGUI {
     public:
 
         enum InterfaceManagerEvents {
-            TOUCHDOUBLETAP, TOUCHDOWN, TOUCHMOVED, TOUCHMOVED_EXTERNAL, TOUCHUP, TOUCHEXIT, TOUCHUP_EXTERNAL, MOUSEPRESSED, MOUSERELEASED, MOUSEDRAGGED, MOUSEMOVED, TOUCHEXITFLICK, TOUCHANDHOLD
+            TOUCHDOUBLETAP, TOUCHDOWN, TOUCHMOVED, TOUCHMOVED_EXTERNAL, TOUCHUP, TOUCHEXIT, TOUCHUP_EXTERNAL, MOUSEPRESSED, MOUSERELEASED, MOUSEDRAGGED, MOUSEMOVED, TOUCHEXITFLICK, TOUCHANDHOLD,
+            TOUCHCANCELLED,
         };
         
         
@@ -79,6 +80,7 @@ namespace EAVIGUI {
         virtual void mouseReleased(int x, int y, int button );
         virtual void mouseDragged(int x, int y, int button);
         virtual void setEnabled(bool newEnabled);
+        virtual bool isEnabled();
         virtual void touchDown(ofTouchEventArgs &touch);
         virtual void touchUp(ofTouchEventArgs &touch);
         virtual void touchUpExternal(ofTouchEventArgs &touch);
@@ -86,7 +88,10 @@ namespace EAVIGUI {
         virtual void touchDoubleTap(ofTouchEventArgs &touch);
         virtual void touchMoved(ofTouchEventArgs &touch);
         virtual void touchExit(ofTouchEventArgs &touch);
+        virtual void touchCancelled(ofTouchEventArgs &touch);
         virtual bool keepThisTouch(ofTouchEventArgs &touch); //don't exit, continue piping this touch to the control when out of its bounds
+        void saveEnabledState(); //used when showing modal groups
+        void restoreEnabledState();
         
         
         void addChild(InterfaceObject* child);
@@ -138,9 +143,9 @@ namespace EAVIGUI {
         void setAnchorPoint(float ax, float ay);
         void getAnchorPoint(float &ax, float &ay);
 
-        bool pulsate;
-        float pulsateSpeed;
-        float pulsateMin, pulsateMax;
+//        bool pulsate;
+//        float pulsateSpeed;
+//        float pulsateMin, pulsateMax;
         
         void addEffect(baseEffect *newEffect);
         void dropEffects();
@@ -150,12 +155,15 @@ namespace EAVIGUI {
         void getTouchDownPoint(int &x, int &y);
         
         void enableExitFlickDetection(bool val);
-        
         bool isDraggable(){return draggable;}
         void setIsDraggable(bool val) {draggable = val;}
         bool beingTouched(){return isTouched;}
         void setTouchAndHoldTime(int newVal);
         void enableTouchAndHold(bool val);
+        void enableExternalTouchUp(bool val);
+        virtual void touchMovingToExternal(ofTouchEventArgs &touch);
+        virtual bool enableAlphaWhenDrawing();
+
     protected:
         InterfaceObject();
         void init(InterfaceListener *_listener, int _id, int _x, int _y);
@@ -169,6 +177,7 @@ namespace EAVIGUI {
         bool invalidated;
         bool enabled;
         bool exitFlickDetection;
+        bool externalTouchUp;
         void recordTouchMoved(ofTouchEventArgs &touch);
         
         vector<InterfaceObject*> children;
@@ -202,6 +211,9 @@ namespace EAVIGUI {
         long touchAndHoldTS;
         bool touchAndHoldSent;
         bool touchAndHoldEnabled;
+        int exitGestureStartIdx;
+        bool wasEnabled;
+        
     private:
         void show();
         void hide();

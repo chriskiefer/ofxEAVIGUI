@@ -1,7 +1,9 @@
 //
-//  EAVIGUI.slider.h
+//  EAVIGUI.imagePanel.h
+//  FishPolice
 //
-//  Created by Chris on 21/06/2013.
+//  Created by Chris on 27/08/2013.
+//
 //
 /*
  *  EAVIGUI
@@ -28,40 +30,28 @@
  *	FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  *	OTHER DEALINGS IN THE SOFTWARE.
  */
-#ifndef __FishPolice__EAVIGUI_slider__
-#define __FishPolice__EAVIGUI_slider__
 
-#include "EAVIGUI.label.h"
+#ifndef __FishPolice__EAVIGUI_imagePanel__
+#define __FishPolice__EAVIGUI_imagePanel__
+
+#include "EAVIGUI.panel.h"
 #include <iostream>
 
 using namespace std;
 
 namespace EAVIGUI {
     
-    class Slider : public Label {
+    class ImagePanel : public Panel {
     public:
-        enum sliderEvents {SLIDERMOVED};
-        enum sliderTypes {TOUCHANYWHERE, PICKUP};
-        Slider(InterfaceListener *_listener, int _id, int _x, int _y, int _w, int _h, ofTrueTypeFont *_font, string _text, ofColor _textcolour, ofColor _backgroundColour, ofColor sliderColour);
-        float getValue() {return value;}
-        void setValue(float val);
-        bool keepThisTouch(ofTouchEventArgs &touch);
-        void setSliderType(sliderTypes val);
+        ImagePanel(InterfaceListener *_listener, int _id, int _x, int _y, int _w, int _h, ofColor _colour, ofColor _borderColour,
+                   unsigned int borderWidth, string fileName);
     protected:
-        ofColor sliderColour;
         void drawToBuffer();
-        float value;
-        void touchDown(ofTouchEventArgs &touch);
-        void touchMoved(ofTouchEventArgs &touch);
-        void touchUp(ofTouchEventArgs &touch);
-        void touchUpExternal(ofTouchEventArgs &touch);
-        void touchExit(ofTouchEventArgs &touch);
-        void moveSlider(ofTouchEventArgs &touch);
-        int touchTarget;
-        sliderTypes sliderType;
-        float sliderWidth, sliderLeft;
-        float barLeft, barWidth;
+        ofImage im;
+        unsigned borderWidth;
+
     };
     
 }
-#endif /* defined(__FishPolice__EAVIGUI_slider__) */
+
+#endif /* defined(__FishPolice__EAVIGUI_imagePanel__) */

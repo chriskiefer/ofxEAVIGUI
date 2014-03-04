@@ -29,7 +29,6 @@
 
 #include "EAVIGUI.interfaceObject.h"
 #include <iostream>
-#include <list>
 
 using namespace std;
 
@@ -49,12 +48,15 @@ namespace EAVIGUI {
         void touchUp(ofTouchEventArgs &touch);
         void touchExit(ofTouchEventArgs &touch);
         void setEnabled(bool newEnabled);
+        void setDisabledState(string filename);
     protected:
         void init();
         virtual void drawToBuffer();
         ofImage im, touchIm;
         ofColor imColor;
         bool canTouchTranparency;  //if false, reject touches on transparent pixels
+        ofImage disabledIm;
+        bool hasDisabledIm;
     };
     
 };

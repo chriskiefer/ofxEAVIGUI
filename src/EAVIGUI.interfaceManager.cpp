@@ -1,4 +1,3 @@
-
 /*
  *  EAVIGUI
  *  Copyright 2010 Chris Kiefer. All rights reserved.
@@ -36,14 +35,18 @@ namespace EAVIGUI {
     interfaceObjectVector InterfaceManager::currentModalGroup = NULL;
     touchListenerProxy InterfaceManager::touchListener;
     eventProxy InterfaceManager::eventListener;
+#ifdef TARGET_OF_IPHONE
     iPhoneEventsProxy InterfaceManager::iPhoneListener;
+#endif
     map<string, ofTrueTypeFont> InterfaceManager::fontList;
     float InterfaceManager::deviceScaleMod = 1.0;
     bool InterfaceManager::redirectMouseToTouch = false;
     InterfaceManager::rotationLockModes InterfaceManager::rotationLock = InterfaceManager::NOROTATIONLOCK;
     map<int, InterfaceObject*> InterfaceManager::touchedObjects;
     map<int, InterfaceObject*> InterfaceManager::externalTouches;
-
+    bool InterfaceManager::doubleTapFlag = false;
+    bool InterfaceManager::doubleTapEnabled = true;
+    
     InterfaceObject* InterfaceManager::addObject(InterfaceObject* obj) {
         intObjs.push_back(obj);
         return intObjs.back();
@@ -219,7 +222,7 @@ namespace EAVIGUI {
         int i = liveObjectList->size();
         while(i--) {
             ofRectangle rotatedRect = liveObjectList->at(i)->getRectWithScreenRotation();
-            if (liveObjectList->at(i)->isInteractive() && liveObjectList->at(i)->isVisible() &&
+            if (liveObjectList->at(i)->isEnabled() && liveObjectList->at(i)->isInteractive() && liveObjectList->at(i)->isVisible() &&
                 geom::pointInRect(touch.x,touch.y,rotatedRect.x, rotatedRect.y, rotatedRect.width-1, rotatedRect.height-1))
             {
 //                cout << touch.x << ", " << touch.y << ", " << rotatedRect.x << ", " << rotatedRect.y << ", " <<  rotatedRect.width << ", " << rotatedRect.height << endl;
@@ -248,23 +251,36 @@ namespace EAVIGUI {
     }
 
     void InterfaceManager::touchDown(ofTouchEventArgs &touch) {
-        //cout << "Touch down " << touch.x << "," << touch.y << endl;
-        InterfaceObject *obj = InterfaceManager::getTargetObject(touch);
-        if (NULL != obj) {
-//            cout << "touch down: " << obj->id << endl;
-            touchedObjects[touch.id] = obj;
-            obj->touchDown(touch);
+        if (doubleTapFlag)
+            //if we catch the second tap of a double tap, it reports strange coordinates
+            doubleTapFlag = false;
+        else {
+            InterfaceObject *obj = InterfaceManager::getTargetObject(touch);
+            if (NULL != obj) {
+    //            cout << "touch down: " << obj->id << endl;
+                touchedObjects[touch.id] = obj;
+                obj->touchDown(touch);
+            }
         }
-        
     }
     
     void InterfaceManager::touchMoved(ofTouchEventArgs &touch) {
         //has an object kept this touch?
         InterfaceObject* trackingObject = queryTouchObjectMap(externalTouches, touch.id);
+        //if tracking object, and touch hasn't moved back into tracking object
+        bool internalTouchMoved = true;
         if (trackingObject != NULL) {
-            //pipe the touch to this object
-            trackingObject->touchMovedExternal(touch);
-        }else{
+            bool movedBackIntoObject = getTargetObject(touch) == trackingObject;
+            if (movedBackIntoObject) {
+                cout << "mb\n";
+                externalTouches[touch.id] = NULL;
+            }else{
+                //pipe the touch to this object
+                internalTouchMoved = false;
+                trackingObject->touchMovedExternal(touch);
+            }
+        }
+        if (internalTouchMoved) {
     //        cout << "Touch moved " << touch.id << endl;
             InterfaceObject *obj = getTargetObject(touch);
             //in an object?
@@ -300,6 +316,7 @@ namespace EAVIGUI {
         bool keepTouch = touchedObjects[touch.id]->keepThisTouch(touch);
         if (keepTouch) {
             externalTouches[touch.id] = touchedObjects[touch.id];
+            touchedObjects[touch.id]->touchMovingToExternal(touch);
         }else{
             touchedObjects[touch.id]->touchExit(touch);
         }
@@ -327,13 +344,24 @@ namespace EAVIGUI {
     }
 
     void InterfaceManager::touchDoubleTap(ofTouchEventArgs &touch) {
-        InterfaceObject *obj = InterfaceManager::getTargetObject(touch);
-        if (NULL != obj) {
-            obj->touchDoubleTap(touch);
+        if (doubleTapEnabled) {
+            InterfaceObject *obj = InterfaceManager::getTargetObject(touch);
+            if (NULL != obj) {
+                obj->touchDoubleTap(touch);
+            }
+            doubleTapFlag = true;
         }
     }
 
+    void InterfaceManager::enableDoubleTap(bool val) {
+        doubleTapEnabled = val;
+    }
+
     void InterfaceManager::touchCancelled(ofTouchEventArgs &touch) {
+        InterfaceObject *obj = InterfaceManager::getTargetObject(touch);
+        if (NULL != obj) {
+            obj->touchCancelled(touch);
+        }
     }
 
 
@@ -344,10 +372,15 @@ namespace EAVIGUI {
                 it->second = NULL;
             }
         }
-        //disable other controls
+        //disable/enable other controls
         for (int i=0; i < intObjs.size(); i++) {
             if (std::find(modalGroup->begin(), modalGroup->end(), intObjs[i]) == modalGroup->end()) {
-                intObjs[i]->setEnabled(!visible);
+                if (visible) {
+                    intObjs[i]->saveEnabledState();
+                    intObjs[i]->setEnabled(false);
+                }else{
+                    intObjs[i]->restoreEnabledState();
+                }
             }
         }
         for(int i=0; i < modalGroup->size(); i++) {
@@ -358,7 +391,9 @@ namespace EAVIGUI {
 
     void InterfaceManager::update() {
         for (int i=0; i < intObjs.size(); i++) {
-            intObjs[i]->update();
+            if (intObjs[i]->isVisible()) {
+                intObjs[i]->update();
+            }
         }
     }
 
@@ -452,7 +487,7 @@ namespace EAVIGUI {
     }
 
     void touchListenerProxy::touchCancelled(ofTouchEventArgs &touch) {
-        
+        InterfaceManager::touchCancelled(touch);
     }
 
 

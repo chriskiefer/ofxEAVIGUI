@@ -1,7 +1,9 @@
 //
-//  EAVIGUI.slider.h
+//  EAVIGUI.imageSlider.h
+//  FishPolice
 //
-//  Created by Chris on 21/06/2013.
+//  Created by Chris on 30/08/2013.
+//
 //
 /*
  *  EAVIGUI
@@ -28,40 +30,44 @@
  *	FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  *	OTHER DEALINGS IN THE SOFTWARE.
  */
-#ifndef __FishPolice__EAVIGUI_slider__
-#define __FishPolice__EAVIGUI_slider__
 
-#include "EAVIGUI.label.h"
+#ifndef __FishPolice__EAVIGUI_imageSlider__
+#define __FishPolice__EAVIGUI_imageSlider__
+
 #include <iostream>
 
-using namespace std;
+#include "EAVIGUI.interfaceObject.h"
+
 
 namespace EAVIGUI {
     
-    class Slider : public Label {
+    class ImageSlider : public InterfaceObject {
     public:
         enum sliderEvents {SLIDERMOVED};
-        enum sliderTypes {TOUCHANYWHERE, PICKUP};
-        Slider(InterfaceListener *_listener, int _id, int _x, int _y, int _w, int _h, ofTrueTypeFont *_font, string _text, ofColor _textcolour, ofColor _backgroundColour, ofColor sliderColour);
-        float getValue() {return value;}
+        ImageSlider(InterfaceListener *_listener, int _id, int _x, int _y, std::string barImageFileName, std::string sliderImageFileName, std::string barTouchImageFileName, std::string sliderTouchImageFileName);
         void setValue(float val);
-        bool keepThisTouch(ofTouchEventArgs &touch);
-        void setSliderType(sliderTypes val);
+        float getValue() {return value;}
+        bool canInteractAt(int x, int y);
+        void setBarImage(int val);
+        int addBarImage(string filename);
     protected:
-        ofColor sliderColour;
         void drawToBuffer();
-        float value;
         void touchDown(ofTouchEventArgs &touch);
         void touchMoved(ofTouchEventArgs &touch);
         void touchUp(ofTouchEventArgs &touch);
         void touchUpExternal(ofTouchEventArgs &touch);
         void touchExit(ofTouchEventArgs &touch);
-        void moveSlider(ofTouchEventArgs &touch);
-        int touchTarget;
-        sliderTypes sliderType;
+        virtual void moveSlider(ofTouchEventArgs &touch);
+        
+        ofImage sliderIm, sliderTouchIm, barTouchIm;
+        int currentBarIm;
+        std::vector<ofImage> barIms;
+        float value;
         float sliderWidth, sliderLeft;
         float barLeft, barWidth;
+        int touchTarget;        
     };
     
 }
-#endif /* defined(__FishPolice__EAVIGUI_slider__) */
+
+#endif /* defined(__FishPolice__EAVIGUI_imageSlider__) */

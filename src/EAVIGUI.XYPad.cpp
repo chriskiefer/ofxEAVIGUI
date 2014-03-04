@@ -5,6 +5,31 @@
 //  Created by Chris on 24/06/2013.
 //
 //
+/*
+ *  EAVIGUI
+ *  Copyright 2010 Chris Kiefer. All rights reserved.
+ *
+ *	Permission is hereby granted, free of charge, to any person
+ *	obtaining a copy of this software and associated documentation
+ *	files (the "Software"), to deal in the Software without
+ *	restriction, including without limitation the rights to use,
+ *	copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *	copies of the Software, and to permit persons to whom the
+ *	Software is furnished to do so, subject to the following
+ *	conditions:
+ *
+ *	The above copyright notice and this permission notice shall be
+ *	included in all copies or substantial portions of the Software.
+ *
+ *	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ *	EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+ *	OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ *	NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+ *	HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+ *	WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ *	FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+ *	OTHER DEALINGS IN THE SOFTWARE.
+ */
 
 #include "EAVIGUI.XYPad.h"
 
@@ -19,21 +44,34 @@ namespace EAVIGUI {
         setIsInteractive(true);
         xValue = 0.5;
         yValue = 0.5;
+        markerDiameter = min(w,h) * 0.2;
+        hasBackground = hasDisabldBackground = false;
     }
 
     
     void XYPad::drawToBuffer() {
-        ofFill();
-        ofSetColor(backgroundColour);
-        ofRect(0,0,w,h);
-        ofSetColor(markerColour);
-        ofNoFill();
-        float xpos = xValue * w;
-        float ypos = yValue * h;
-        ofCircle(xpos, ypos, 40);
-        ofSetColor(230,230,230,100);
-        ofLine(xpos, 0, xpos, h);
-        ofLine(0,ypos, w, ypos);
+        if (hasBackground) {
+            ofSetColor(255);
+            if (isEnabled()) {
+                background.draw(0,0,w,h);
+            }else{
+                disabledBackground.draw(0,0,w,h);
+            }
+        }else{
+            ofSetColor(backgroundColour);
+            ofFill();
+            ofRect(0,0,w,h);
+        }
+        if (isEnabled()) {
+            ofSetColor(markerColour);
+            ofNoFill();
+            float xpos = xValue * w;
+            float ypos = yValue * h;
+            ofCircle(xpos, ypos, markerDiameter);
+            ofSetColor(230,230,230,100);
+            ofLine(xpos, 0, xpos, h);
+            ofLine(0,ypos, w, ypos);
+        }
     }
     
     void XYPad::touchDown(ofTouchEventArgs &touch) {
@@ -52,5 +90,24 @@ namespace EAVIGUI {
         invalidate();
     }
 
+    void XYPad::setXValue(float val) {
+        xValue = val;
+        invalidate();
+    }
+    
+    void XYPad::setYValue(float val) {
+        yValue = val;
+        invalidate();
+    }
+    
+    void XYPad::setBackground(string filename) {
+        background.loadImage(ofToDataPath(filename));
+        hasBackground = true;
+    }
+    
+    void XYPad::setDisabledBackground(string filename){
+        disabledBackground.loadImage(ofToDataPath(filename));
+        hasDisabldBackground = true;
+    }
 
 };
