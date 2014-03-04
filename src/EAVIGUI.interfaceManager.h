@@ -96,14 +96,15 @@ namespace EAVIGUI {
         static void setGroupVisibility(InterfaceObjectGroup &objects, bool visibility);
         static float deviceScaleMod;
         
-        static bool redirectMouseToTouch;
         static void deviceOrientationChanged(int newOrientation);
         static void setRotationLock(rotationLockModes newlock);
         static rotationLockModes getRotationLock();
         static void setScreenRotations(screenRotations newMode);
         static void enableDoubleTap(bool val);
+        static void setRedirectMouseToTouch(bool val) {redirectMouseToTouch = val;}
 
     private:
+        static bool redirectMouseToTouch;
         static InterfaceObjectGroup intObjs;
         static InterfaceObjectGroup panels;
         static interfaceObjectVector getLiveObjectList();

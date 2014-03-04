@@ -49,8 +49,7 @@ namespace EAVIGUI {
 
     void CheckBox::touchUp(ofTouchEventArgs &touch) {
         Label::touchUp(touch);
-        checked = !checked;
-        invalidate();
+        setChecked(!checked);
     }
 
 }

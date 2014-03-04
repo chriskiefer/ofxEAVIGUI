@@ -7,7 +7,7 @@
 //
 
 #include "EAVIGUI.arcSlider.h"
-#include "geomFunctions.h"
+#include "EAVIGUI.geomFunctions.h"
 
 namespace EAVIGUI {
     ArcSlider::ArcSlider(InterfaceListener *_listener, int _id, int _x, int _y, string barImageFileName, string sliderImageFileName, string barTouchImageFileName, string sliderTouchImageFileName, ofPoint _arcStart, ofPoint _arcEnd, float _arcSize) : ImageSlider(_listener, _id, _x, _y, barImageFileName, sliderImageFileName, barTouchImageFileName, sliderTouchImageFileName) {
@@ -25,8 +25,8 @@ namespace EAVIGUI {
 //        Q1 = midPoint - (t * N);
         Q2 = midPoint + (t * N);
         
-        float a1 = angleBetween(arcStart.x, arcStart.y, Q2.x, Q2.y);
-        float a2 = angleBetween(arcEnd.x, arcEnd.y, Q2.x, Q2.y);
+        float a1 = geom::angleBetween(arcStart.x, arcStart.y, Q2.x, Q2.y);
+        float a2 = geom::angleBetween(arcEnd.x, arcEnd.y, Q2.x, Q2.y);
         if (a1 < 0) a1 += TWO_PI;
         if (a2 < 0) a2 += TWO_PI;
         bound1 = min(a1, a2);
@@ -87,7 +87,7 @@ namespace EAVIGUI {
     }
 
     void ArcSlider::moveSlider(ofTouchEventArgs &touch) {
-        float theta = angleBetween(touch.x, touch.y, Q2.x, Q2.y);
+        float theta = geom::angleBetween(touch.x, touch.y, Q2.x, Q2.y);
         //wrap?
         if (theta < 0) theta += TWO_PI;
         bool validAngle = false;
@@ -116,7 +116,7 @@ namespace EAVIGUI {
     bool ArcSlider:: canInteractAt(int x, int y) {
         float distToCenter =  ofDist(x, y, Q2.x, Q2.y);
         bool distOK = distToCenter < highDist && distToCenter > lowDist;
-        float theta = angleBetween(x, y, Q2.x, Q2.y);
+        float theta = geom::angleBetween(x, y, Q2.x, Q2.y);
         //wrap?
         if (theta < 0) theta += TWO_PI;
         bool angleOK = false;

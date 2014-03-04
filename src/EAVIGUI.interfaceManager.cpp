@@ -35,7 +35,9 @@ namespace EAVIGUI {
     interfaceObjectVector InterfaceManager::currentModalGroup = NULL;
     touchListenerProxy InterfaceManager::touchListener;
     eventProxy InterfaceManager::eventListener;
+#ifdef TARGET_OF_IPHONE
     iPhoneEventsProxy InterfaceManager::iPhoneListener;
+#endif
     map<string, ofTrueTypeFont> InterfaceManager::fontList;
     float InterfaceManager::deviceScaleMod = 1.0;
     bool InterfaceManager::redirectMouseToTouch = false;
